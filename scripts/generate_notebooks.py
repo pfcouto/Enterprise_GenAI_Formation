@@ -55,7 +55,7 @@ write("01_docling_to_google_okf.ipynb", [
 ```
 data/raw_syone_corp/        <- scraped web pages (Markdown)         \\
 data/raw_hardware_manuals/  <- 8 PDF manuals with tables + figures   /  Stage 1: acquisition
-        |  Docling  (layout model + TableFormer tables + OCR)  or  GLM-OCR (a 0.9B vision-language model)
+        |  Docling  (layout model + TableFormer tables + OCR)
 data/docling_output/        <- Stage 2: structured JSON (markdown, tables, figures)
         |  OKF compiler (frontmatter, entities, related links, INDEX.md)
 data/okf_store/             <- Stage 3: the knowledge base both retrieval tracks use
@@ -109,30 +109,20 @@ from IPython.display import Image, display
 display(Image(filename=str(ROOT / "data/extracted_images/hardware_manuals" / doc["images"][0]["file"]), width=620))
 '''),
     md("""
-## 3. Two engines, one API
+## 3. Why Docling standard, and not a vision model?
 
-| | Docling standard (default) | GLM-OCR (optional) |
+A newer option is a **vision-language model** that reads a page *image* and writes Markdown. We measured one, GLM-OCR (0.9B), through Docling's VLM pipeline on the 8 Aurora manuals (Apple M4 Max), then removed it from this repository:
+
+| | Docling standard (used here) | GLM-OCR, served on the GPU by LM Studio |
 |---|---|---|
-| What it is | Layout model + TableFormer + RapidOCR, classic pipeline | 0.9B vision-language model: page image in, Markdown out |
-| Speed (Apple M4 Max) | ~1-3 s per page | ~6 min/page on the CPU inside Docling, **~7 s/page** when served on the GPU by LM Studio |
-| Tables | Dedicated table-structure model | Whatever the VLM writes |
-| Best for | The whole corpus | Scans, formulas, hard layouts; use on a GPU / Apple MLX |
+| What it is | Layout model + TableFormer (tables) + RapidOCR | 0.9B vision-language model: page image in, Markdown out |
+| Time, 8 manuals | **31 s** | **569 s** (18 times slower; about 6 min/page on the CPU) |
+| Table rows recovered | 427 | 368 |
+| Fault-code manual | 6 tables | 4: the continuation of the fault table on the next page is lost |
+| Document titles | the real titles | the file name |
 
-Docling's Transformers engine cannot use the Apple GPU, so by default GLM-OCR runs on the **CPU**. Serve the GGUF build in LM Studio instead (`ggml-org/GLM-OCR-GGUF`, identifier `glm-ocr`, server on) and set `GLM_BACKEND = "lmstudio"` below: the same pipeline, about 55 times faster. Set `RUN_GLM = True` to try it:
+**Newer is not better by default: measure on your own documents.** Vision models earn their place on scans, formulas and hard layouts; for born-digital PDFs with tables, the classic pipeline wins here.
 """),
-    code('''
-RUN_GLM = False
-GLM_BACKEND = "transformers"          # "lmstudio" or "ollama": GPU through a local server (see above)
-if RUN_GLM:
-    glm = DoclingDocumentParser(ROOT / "data/extracted_images", ocr_engine="glm-ocr", glm_backend=GLM_BACKEND,
-                                max_pages=1 if GLM_BACKEND == "transformers" else None)
-    t0 = time.time()
-    g = glm.parse_document(ROOT / "data/raw_hardware_manuals/aor3_08_release_notes_firmware.pdf", corpus="hardware_manuals")
-    print(g["ocr_engine_used"], f"{time.time()-t0:.0f}s", len(g["markdown_content"]), "chars")
-    print(g["markdown_content"][:800])
-else:
-    print("Skipped (RUN_GLM = False). From the terminal: python -m backend.ingestion.run_docling --engine glm-ocr --glm-backend lmstudio")
-'''),
     md("## 4. Run the full pipeline: Docling -> JSON -> OKF"),
     code('''
 from backend.ingestion.run_docling import run_docling_parsing

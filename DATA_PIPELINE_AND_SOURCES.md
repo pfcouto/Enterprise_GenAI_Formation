@@ -127,11 +127,8 @@ Photorealistic pictures cannot be produced natively here (no image-generation mo
 | 4 Index | `python -m backend.graph_rag.indexer` (or notebook 02) | Qdrant + Neo4j |
 
 ### Stage 2: Docling parsing (`backend/ingestion/docling_parser.py`)
-* **`docling_standard`** (default): layout model + TableFormer + RapidOCR. About 35 s for all 87 documents on a laptop CPU.
-* **`glm-ocr`** (optional): the same Docling API driven by **GLM-OCR**, a 0.9B vision-language model (page image in, Markdown out). It has two backends, and the difference is dramatic (measured on an Apple M4 Max):
-  * `--glm-backend transformers` (default): the model runs **inside Docling on the CPU**: Docling's Transformers engine supports only CPU, CUDA and XPU, **not Apple's GPU**. About **6 minutes per page**, so it is page-limited (`--max-pages`).
-  * `--glm-backend lmstudio` (or `ollama`): the model runs in **LM Studio on the GPU** (a GGUF build, `ggml-org/GLM-OCR-GGUF`, loaded under the identifier `glm-ocr`) and Docling calls its local OpenAI-compatible server. About **7 seconds per page**: the whole hardware corpus (8 PDFs, 62 pages) in **9.5 minutes** versus an estimated 6 hours on the CPU backend.
-  * Quality on our corpus (output in `data/okf_store_glm_ocr/`, never queried by the API): all **30/30 fault codes intact**, all 19 hardware golden questions answerable, all 26 figure bindings found; 368 table rows recovered versus 427 for the classic pipeline.
+* **`docling_standard`**: layout model + TableFormer + RapidOCR. About 35 s for all 87 documents on a laptop CPU.
+* **Why not a vision model?** An earlier version also offered **GLM-OCR**, a 0.9B vision-language model (page image in, Markdown out), through Docling's VLM pipeline. Measured on the 8 manuals (Apple M4 Max): 569 s served on the GPU by LM Studio against 31 s for the standard pipeline, 368 table rows against 427, and the continuation of the fault table on its next page lost. It was removed; the classic pipeline wins on born-digital PDFs with tables.
 * Native Markdown (the scraped pages) needs no OCR; the engine is reported as `native-markdown`.
 * **Figures**: each figure is bound to its file through its caption line (`Figure F4: ...`) and its description is stored next to it. A language model never sees pixels, so this description is what makes text *inside* an image searchable. In a production system a VLM captioning step fills this slot; here the description is generated together with the figure.
 * Pitfall fixed here: Docling escapes underscores in Markdown (`0x4A7B\_VRM\_OVERVOLT`), which silently breaks exact-match search. The parser un-escapes them, and `validate_dataset.py` checks that all 30 codes survive PDF extraction intact (a narrow table column once split `MISMATCH` into `MISMATC H`).
@@ -166,7 +163,7 @@ images:
 | Syone | `Organization`, `Partner`, `Service`, `DeliveryModel`, `Solution`, `Technology`, `Certification`, `Location`, `Event`, `Document`, `VisualDiagram` | `PARTNERS_WITH`, `OFFERS`, `DEVELOPS`, `USES_TECH`, `DESCRIBES`, `MENTIONS`, `RELATED_TO` |
 | Aurora | `ErrorCode`, `Subsystem`, `LEDState`, `Component`, `Part`, `Document`, `VisualDiagram` | `RAISES`, `IN_SUBSYSTEM`, `INDICATED_BY`, `AFFECTS`, `DOCUMENTS`, `CONTAINS_VISUAL` |
 
-Full run on the committed data: 2,093 chunks (1,373 Syone + 720 hardware: table rows, prose, one chunk per figure, one summary "card" per document) and 230 unique graph nodes with 1,085 relationships, in about 40 seconds.
+Full run on the committed data (Docling 2.150.1): 2,087 chunks (1,373 Syone + 714 hardware: table rows, prose, one chunk per figure, one summary "card" per document) and 227 unique graph nodes with 1,085 relationships, in about 45 seconds. (An older Docling version gave 720 hardware chunks: newer versions write slightly cleaner text, so the count moves a little; the evaluation scores did not.)
 
 ---
 

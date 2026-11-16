@@ -5,7 +5,7 @@ A hands-on training environment that builds one complete GenAI system and compar
 * **Track A: GraphRAG + BM25**: chunk, embed, extract a knowledge graph; answer from dense + BM25 hybrid search plus graph facts.
 * **Track B: Google OKF agent**: no index; a tool-calling agent *navigates* a folder of Markdown files (list, grep, read whole documents, follow links).
 
-Around the two tracks: document parsing (Docling, optional GLM-OCR), an AI gateway with free-model routing (LiteLLM), tracing (Langfuse), metrics (Prometheus + Grafana), a golden evaluation set and a prompt-optimization loop.
+Around the two tracks: document parsing (Docling), an AI gateway with free-model routing (LiteLLM), tracing (Langfuse), metrics (Prometheus + Grafana), a golden evaluation set and a prompt-optimization loop.
 
 ![Dual-track UI](docs/screenshots/01_home.png)
 
@@ -62,7 +62,7 @@ No API key? Everything still runs: answers fall back to **extractive mode** (the
 
 > **Why more than one provider?** Because limits are a fact of life: *this is exactly what an AI gateway is for.* Services call the alias `formation-fast`; LiteLLM tries provider A, and on a 429 or outage serves the request from provider B, then from another model family, then from a local model. The gateway also issues **virtual keys** (one model alias only, a budget, a rate limit, an expiry), so trainees never see a provider key. Setup, a live failover drill and the key tests: [docs/AI_GATEWAY_FAILOVER.md](docs/AI_GATEWAY_FAILOVER.md).
 
-Data stages one by one (this is how the formation runs them): `python scripts/scrape_syone.py`, `python scripts/download_hardware_manuals.py`, then the commands above. Presenter shortcut: `./scripts/run_full_pipeline.sh`. Optional: parse the manuals with **GLM-OCR on your GPU** through LM Studio (`--engine glm-ocr --glm-backend lmstudio`, about 7 s per page versus about 6 minutes per page on the CPU).
+Data stages one by one (this is how the formation runs them): `python scripts/scrape_syone.py`, `python scripts/download_hardware_manuals.py`, then the commands above. The snapshot of syone.com is committed; re-scraping refreshes it, but the golden questions were checked against the committed one.
 
 ## Services
 
@@ -84,7 +84,7 @@ The console's **Services** page (<http://localhost:13002/services>) lists every 
 
 | # | Notebook | You learn |
 |---|---|---|
-| 1 | `01_docling_to_google_okf` | What parsing keeps and loses (tables, figures); Docling vs GLM-OCR; the OKF format |
+| 1 | `01_docling_to_google_okf` | What parsing keeps and loses (tables, figures); why not a vision model (measured); the OKF format |
 | 2 | `02_graphrag_hybrid_neo4j_qdrant` | Chunking tables, entity extraction, dense vs BM25 vs hybrid with visible ranks, Cypher |
 | 3 | `03_langchain_deep_agents_okf` | The four agent tools, scripted vs LLM navigation, `deepagents` |
 | 4 | `04_litellm_langfuse_telemetry` | One gateway, aliases, **provider failover** (safe drill), **virtual keys**, Langfuse traces, Prometheus metrics |
@@ -106,6 +106,6 @@ Documents/          slide deck, agenda and goals (Syone-internal: git-ignored, n
 ```
 
 ## Honest limits
-This is a teaching system. Entity extraction is rule-based (an LLM extractor is the usual next step); evaluation is keyword based, with an optional panel of three LLM judges (they sometimes disagree with the keyword scores, and with each other: read those cases); GLM-OCR is slow on CPU; free models are rate limited and change every few weeks. Details and the full review: [docs/CODEBASE_REVIEW.md](docs/CODEBASE_REVIEW.md).
+This is a teaching system. Entity extraction is rule-based (an LLM extractor is the usual next step); evaluation is keyword based, with an optional panel of three LLM judges (they sometimes disagree with the keyword scores, and with each other: read those cases); free models are rate limited and change every few weeks. Details and the full review: [docs/CODEBASE_REVIEW.md](docs/CODEBASE_REVIEW.md).
 
 Designed for **Syone**. MIT License. Aurora Systems and the AOR-3 are fictional.

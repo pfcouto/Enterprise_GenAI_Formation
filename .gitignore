@@ -63,8 +63,6 @@ data/docling_output/*
 !data/docling_output/.gitkeep
 data/okf_store/*
 !data/okf_store/.gitkeep
-data/okf_store_glm_ocr/*
-!data/okf_store_glm_ocr/.gitkeep
 notebooks/_executed/
 docs/screenshots/*.yml
 docs/screenshots/*.log

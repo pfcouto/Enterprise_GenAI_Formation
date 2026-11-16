@@ -60,12 +60,9 @@ Local model cache (./models/)
   OK       fastembed BM25 sparse (Qdrant/bm25)
   OK       Docling layout model
   OK       Docling TableFormer
-  missing  GLM-OCR 0.9B (optional)
 
 Status: READY for offline use
 ```
-
-(GLM-OCR is optional, 2.5 GB; add `--glm` only if you want to try it.)
 
 ### Choose how the LLM will answer
 
@@ -135,14 +132,7 @@ OK
 
 > **Why the description of a figure matters:** a language model never sees pixels. The description (what is *drawn* in the figure) is stored with it, so a question such as "which port carries the management VLAN?" can be answered from a diagram.
 
-**Optional: the GLM-OCR engine** (a 0.9B vision-language model that reads a page image and writes Markdown). Two ways to run it:
-
-| Backend | Command | Speed |
-|---|---|---|
-| **GPU via LM Studio (recommended)** | In LM Studio download `ggml-org/GLM-OCR-GGUF` (Q8_0 is fine), load it (identifier `glm-ocr`) and start the server (port 1234). Then `python -m backend.ingestion.run_docling --engine glm-ocr --glm-backend lmstudio --corpus hardware_manuals` | about **7 s per page**; all 8 manuals in about 9.5 minutes (Apple M4 Max) |
-| CPU inside Docling | `... --engine glm-ocr --max-pages 1 --corpus hardware_manuals` (after `download_models.py --glm`) | about **6 minutes per page**: try one page only. Docling's Transformers engine cannot use the Apple GPU |
-
-The output goes to `data/okf_store_glm_ocr/` (compile with `python -m backend.ingestion.run_okf --engine glm-ocr`); compare it with `data/okf_store/` (all 30 fault codes survive in both). Ollama works the same way with `--glm-backend ollama`.
+**Why Docling and not a vision model?** We measured GLM-OCR, a 0.9B vision-language model, on the same 8 manuals: 18 times slower even on a GPU, and it lost a table that continues on the next page. Notebook 01 section 3 has the numbers. Newer is not better by default: measure on your own documents.
 
 ---
 
@@ -166,11 +156,11 @@ python -m backend.graph_rag.indexer
 ```
 
 ```
-Indexed corpus 'hardware_manuals': {'documents': 8,  'chunks': 720,  'qdrant_points': 720,  'graph': {'nodes': 90, 'relationships': 289}}
-Indexed corpus 'syone_corp':       {'documents': 79, 'chunks': 1373, 'qdrant_points': 1373, 'graph': {'nodes': 140, 'relationships': 796}}
+Indexed corpus 'hardware_manuals': {'documents': 8,  'chunks': 714,  'qdrant_points': 714,  'graph': {'nodes': 90, 'relationships': 289}}
+Indexed corpus 'syone_corp':       {'documents': 79, 'chunks': 1373, 'qdrant_points': 1373, 'graph': {'nodes': 137, 'relationships': 796}}
 ```
 
-(About 40 seconds. Safe to re-run.) Refresh <http://localhost:13002>: the header now reads *Ready · 2093 chunks indexed*.
+(About 45 seconds. Safe to re-run.) Refresh <http://localhost:13002>: the header now reads *Ready · 2087 chunks indexed*.
 
 ### Look inside the databases
 
@@ -303,7 +293,6 @@ You should see: call 1 `attempted-fallbacks: 1` (tried the dead primary, then th
 | `formation-local` fails | Local server not running | Start LM Studio's server (port 1234) or Ollama; Ollama needs `api_base: http://host.docker.internal:11434/v1` in the gateway config |
 | Agent track shows `scripted_navigation` | The model does not support tool calling | Pick a model with `supports_tools` in the model explorer |
 | `docker compose up` fails on a port | Another service uses 13000, 13001, 13002, 14000, 16333, 17474, 17687, 18000 or 19090 | Stop it or edit the port mapping in `docker-compose.yml` |
-| `AttributeError: 'NoneType' object has no attribute 'warning'` printed after a GLM-OCR run | Docling's cleanup message at interpreter exit | Harmless: the parse already finished (measured: about 6 minutes for one page on a laptop CPU) |
 | Parsing is slow the first time | Models loading from disk | Run `scripts/download_models.py --download` beforehand |
 | `ModuleNotFoundError: backend` | Wrong directory | Run commands from the repository root |
 | Scraper cannot reach syone.com | Offline / blocked | Use the committed snapshot and skip the scraper |

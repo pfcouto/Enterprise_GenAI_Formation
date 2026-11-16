@@ -8,8 +8,8 @@ pillow>=11.0.0
 reportlab>=4.2.5            # used only to rebuild the Aurora manuals (scripts/dataset_builder)
 matplotlib>=3.9.0           # used only to rebuild the Aurora figures
 
-# Stage 2/3: parsing (Docling standard + optional GLM-OCR VLM engine) and OKF compilation
-docling>=2.100.0
+# Stage 2/3: parsing (Docling standard) and OKF compilation
+docling==2.150.1           # pinned: the chunk counts and scores in the guides were measured with this version
 
 # Notebooks and agent / LLMOps demos
 jupyterlab>=4.2

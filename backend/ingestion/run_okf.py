@@ -9,15 +9,12 @@ Compiles canonical Google OKF Markdown files to: data/okf_store/
 
 Usage:
   python -m backend.ingestion.run_okf
-  python -m backend.ingestion.run_okf --engine glm-ocr
-  python -m backend.ingestion.run_okf --engine docling_standard
-  python -m backend.ingestion.run_okf --engine docling_standard --corpus hardware_manuals
+  python -m backend.ingestion.run_okf --corpus hardware_manuals
   python -m backend.ingestion.run_okf --list
 
 By separating this step from Docling parsing, you can:
   - Inspect intermediate JSON before committing to OKF format
   - Re-compile OKF with different settings without re-running OCR
-  - Compare OKF output between GLM-OCR and Standard engine
 """
 
 import sys
@@ -35,7 +32,6 @@ WORKSPACE_ROOT = Path(__file__).parent.parent.parent
 DATA_DIR = WORKSPACE_ROOT / "data"
 DOCLING_OUTPUT_DIR = DATA_DIR / "docling_output"
 OKF_STORE_DIR = DATA_DIR / "okf_store"
-OKF_STORE_GLM_DIR = DATA_DIR / "okf_store_glm_ocr"
 
 
 def list_docling_outputs():
@@ -57,7 +53,7 @@ def run_okf_compilation(engine_filter: str = "all", corpus_filter: str = "all") 
     Compiles Docling intermediate JSON outputs into canonical Google OKF Markdown files.
 
     Args:
-        engine_filter: 'all', 'glm-ocr', or 'docling_standard'
+        engine_filter: kept for the notebooks; only Docling standard output exists
         corpus_filter: 'all', 'syone_corp', or 'hardware_manuals'
 
     Returns:
@@ -74,19 +70,13 @@ def run_okf_compilation(engine_filter: str = "all", corpus_filter: str = "all") 
         logger.error("  → Run first: python -m backend.ingestion.run_docling")
         return 0
 
-    # Docling Standard output (full documents) is the main knowledge base: data/okf_store/
-    # GLM-OCR output (page-limited comparison run) goes to data/okf_store_glm_ocr/ and is never queried by the API
-    compilers = {}
-    if engine_filter in ("all", "docling_standard"):
-        compilers["standard"] = OKFCompiler(okf_root_dir=OKF_STORE_DIR)
-    if engine_filter in ("all", "glm-ocr"):
-        compilers["glm_ocr"] = OKFCompiler(okf_root_dir=OKF_STORE_GLM_DIR)
+    # Docling standard output is the knowledge base: data/okf_store/
+    compilers = {"standard": OKFCompiler(okf_root_dir=OKF_STORE_DIR)}
 
     logger.info("=" * 70)
     logger.info("GOOGLE OKF COMPILATION STAGE")
     logger.info("=" * 70)
-    logger.info(f"  Docling standard → {OKF_STORE_DIR}   (main knowledge base)")
-    logger.info(f"  GLM-OCR          → {OKF_STORE_GLM_DIR}   (comparison only)")
+    logger.info(f"  Docling standard → {OKF_STORE_DIR}")
 
     # Related links are computed across a whole corpus, so load every parsed doc first, then compile per engine.
     batches: dict = {key: [] for key in compilers}
@@ -99,9 +89,9 @@ def run_okf_compilation(engine_filter: str = "all", corpus_filter: str = "all") 
         corpus_name, doc_id, engine_tag = parts
         if corpus_filter != "all" and corpus_name != corpus_filter:
             continue
-        engine_key = "glm_ocr" if engine_tag == "glm_ocr" else "standard"
-        if engine_key not in compilers:
+        if engine_tag != "standard":   # e.g. files left by an older engine
             continue
+        engine_key = "standard"
         try:
             batches[engine_key].append(json.loads(json_file.read_text(encoding="utf-8")))
         except Exception as e:  # noqa: BLE001
@@ -117,8 +107,7 @@ def run_okf_compilation(engine_filter: str = "all", corpus_filter: str = "all") 
 
     logger.info("\n" + "=" * 70)
     logger.info(f"✓ OKF compilation complete: {total_compiled} OKF documents generated.")
-    logger.info(f"  Main OKF store (Docling standard): {OKF_STORE_DIR}")
-    logger.info(f"  Comparison store (GLM-OCR):        {OKF_STORE_GLM_DIR}")
+    logger.info(f"  OKF store: {OKF_STORE_DIR}")
     logger.info("Next step: start Docker Compose and run Notebook 2 to index into Neo4j + Qdrant")
     logger.info("=" * 70)
     return total_compiled
@@ -132,16 +121,8 @@ if __name__ == "__main__":
 Examples:
   python -m backend.ingestion.run_okf --list
   python -m backend.ingestion.run_okf
-  python -m backend.ingestion.run_okf --engine glm-ocr
-  python -m backend.ingestion.run_okf --engine docling_standard
   python -m backend.ingestion.run_okf --corpus hardware_manuals
         """
-    )
-    arg_parser.add_argument(
-        "--engine",
-        choices=["all", "glm-ocr", "docling_standard"],
-        default="all",
-        help="Which engine's output to compile (default: all)"
     )
     arg_parser.add_argument(
         "--corpus",
@@ -161,4 +142,4 @@ Examples:
         list_docling_outputs()
         sys.exit(0)
 
-    run_okf_compilation(args.engine, args.corpus)
+    run_okf_compilation("docling_standard", args.corpus)

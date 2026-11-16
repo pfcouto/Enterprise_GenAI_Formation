@@ -1,13 +1,12 @@
 """
-Document parser with two PDF engines, both running locally (weights live in ./models/):
+Document parser, running locally (weights live in ./models/):
 
   * docling_standard - Docling's classic pipeline: layout model + TableFormer (tables) + RapidOCR for scanned text.
-  * glm-ocr          - Docling's VLM pipeline driven by Zhipu's GLM-OCR (0.9B vision-language model, page image in,
-                       Markdown out). Same Docling API, different engine: that is what the comparison in Module 1 shows.
+
+(An earlier version also drove GLM-OCR, a 0.9B vision-language model, through Docling's VLM pipeline. Measured on
+the 8 manuals it was 18 times slower even on the GPU and lost a table that crosses a page, so it was removed.)
 
 Scraped Markdown/HTML pages need no OCR: they are read natively (engine reported as "native-markdown").
-
-If an engine cannot run, the parser says so in `ocr_engine_used` (it never pretends): standard is used as the fallback.
 
 Figures: every figure that belongs to a document is attached with its caption AND a text description. For the
 synthetic hardware manuals the description comes from the sidecar `figure_captions.json` that is generated together
@@ -38,56 +37,21 @@ HEADER_FIELDS = ("Source", "Section", "Published", "Summary", "Scraped")
 class DoclingDocumentParser:
     """Parses raw files into a uniform dict consumed by the OKF compiler."""
 
-    def __init__(self, output_images_dir: Path, ocr_engine: str = "docling_standard", max_pages: Optional[int] = None,
-                 glm_backend: Optional[str] = None, glm_api_url: Optional[str] = None):
+    def __init__(self, output_images_dir: Path, ocr_engine: str = "docling_standard", max_pages: Optional[int] = None):
         self.output_images_dir = output_images_dir
         self.output_images_dir.mkdir(parents=True, exist_ok=True)
         self.ocr_engine = ocr_engine.lower()
-        self.max_pages = max_pages  # GLM-OCR runs a 0.9B VLM per page: limit pages for demos (see run_docling --max-pages)
-        self._converters: Dict[str, Any] = {}
-        self.engine_notes: Dict[str, str] = {}
-        # GLM-OCR backend: "transformers" (CPU in Docling: ~6 min/page) | "lmstudio" | "ollama" (GPU, ~7 s/page, needs the model served locally)
-        self.glm_backend = (glm_backend or os.getenv("GLM_OCR_BACKEND", "transformers")).lower()
-        self.glm_api_url = glm_api_url or os.getenv("GLM_OCR_API_URL")
+        self.max_pages = max_pages  # optional: parse only the first N pages of each PDF
+        self._converter: Any = None
 
     # ------------------------------------------------------------------ engines
-    def _get_converter(self, engine: str):
-        """Lazily builds (and caches) the Docling converter for an engine key: 'glm' or 'standard'."""
-        key = "glm" if "glm" in engine else "standard"
-        if key in self._converters:
-            return key, self._converters[key]
-        from docling.datamodel.base_models import InputFormat
-        from docling.document_converter import DocumentConverter, PdfFormatOption
-
-        if key == "glm":
-            try:
-                from docling.datamodel.pipeline_options import VlmConvertOptions, VlmPipelineOptions
-                from docling.pipeline.vlm_pipeline import VlmPipeline
-                engine_options = None
-                if self.glm_backend in ("lmstudio", "ollama"):
-                    from docling.datamodel.stage_model_specs import VlmEngineType
-                    from docling.datamodel.vlm_engine_options import ApiVlmEngineOptions
-                    kind = VlmEngineType.API_LMSTUDIO if self.glm_backend == "lmstudio" else VlmEngineType.API_OLLAMA
-                    kwargs = {"engine_type": kind, "timeout": 300.0}
-                    if self.glm_api_url:
-                        kwargs["url"] = self.glm_api_url
-                    engine_options = ApiVlmEngineOptions(**kwargs)
-                # Docling refuses to call any HTTP service unless this is switched on explicitly (our server is local).
-                opts = VlmPipelineOptions(vlm_options=VlmConvertOptions.from_preset("glm_ocr", engine_options=engine_options),
-                                          enable_remote_services=engine_options is not None)
-                conv = DocumentConverter(format_options={
-                    InputFormat.PDF: PdfFormatOption(pipeline_cls=VlmPipeline, pipeline_options=opts)})
-                self._converters[key] = conv
-                logger.info(f"GLM-OCR VLM pipeline ready (0.9B, backend: {self.glm_backend}).")
-                return key, conv
-            except Exception as e:  # noqa: BLE001
-                self.engine_notes["glm"] = f"GLM-OCR unavailable ({type(e).__name__}: {e}); used docling_standard"
-                logger.warning(self.engine_notes["glm"])
-                return self._get_converter("standard")
-        conv = DocumentConverter()
-        self._converters[key] = conv
-        logger.info("Docling standard pipeline ready (layout model + TableFormer + RapidOCR).")
-        return key, conv
+    def _get_converter(self):
+        """Lazily builds (and caches) the Docling standard converter."""
+        if self._converter is None:
+            from docling.document_converter import DocumentConverter
+            self._converter = DocumentConverter()
+            logger.info("Docling standard pipeline ready (layout model + TableFormer + RapidOCR).")
+        return self._converter
 
     # ------------------------------------------------------------------ public API
     def parse_document(self, file_path: Path, corpus: str, override_engine: Optional[str] = None) -> Dict[str, Any]:
@@ -102,9 +66,8 @@ class DoclingDocumentParser:
             markdown, meta = self._split_scraped_header(raw)
             engine_label, tables = "native-markdown", []
         elif suffix in (".pdf", ".docx", ".pptx", ".html"):
-            key, conv = self._get_converter(engine)
-            note = self.engine_notes.get("glm") if "glm" in engine and key == "standard" else None
-            logger.info(f"Parsing [{corpus}] {file_path.name} with [{'GLM-OCR' if key == 'glm' else 'docling_standard'}]")
+            conv = self._get_converter()
+            logger.info(f"Parsing [{corpus}] {file_path.name} with [docling_standard]")
             kwargs = {"page_range": (1, self.max_pages)} if (self.max_pages and suffix == ".pdf") else {}
             result = conv.convert(str(file_path), **kwargs)
             doc = result.document
@@ -115,9 +78,7 @@ class DoclingDocumentParser:
                     tables.append(t.export_to_dataframe(doc).to_dict(orient="records"))
                 except Exception:  # noqa: BLE001
                     pass
-            engine_label = (f"GLM-OCR 0.9B (Docling VLM pipeline, {self.glm_backend}{' GPU' if self.glm_backend in ('lmstudio', 'ollama') else ' CPU'})") if key == "glm" else "Docling standard (layout + TableFormer + RapidOCR)"
-            if note:
-                engine_label += f" [fallback: {note}]"
+            engine_label = "Docling standard (layout + TableFormer + RapidOCR)"
         else:
             raise ValueError(f"Unsupported file type: {file_path.name}")
 

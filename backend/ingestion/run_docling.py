@@ -7,10 +7,7 @@ Run this AFTER the data acquisition scripts:
 
 Usage:
   python -m backend.ingestion.run_docling
-  python -m backend.ingestion.run_docling --engine glm-ocr
-  python -m backend.ingestion.run_docling --engine docling_standard
-  python -m backend.ingestion.run_docling --engine glm-ocr --corpus hardware_manuals
-  python -m backend.ingestion.run_docling --engine glm-ocr --glm-backend lmstudio     # GPU via LM Studio
+  python -m backend.ingestion.run_docling --corpus hardware_manuals
   python -m backend.ingestion.run_docling --list
 
 Outputs intermediate parsed JSON files to: data/docling_output/
@@ -54,12 +51,12 @@ def list_raw_files():
     print()
 
 
-def run_docling_parsing(engine: str, corpus_filter: str = "all", max_pages: int = None, glm_backend: str = None, glm_url: str = None) -> int:
+def run_docling_parsing(engine: str = "docling_standard", corpus_filter: str = "all", max_pages: int = None) -> int:
     """
     Runs Docling parsing on raw source files and saves intermediate JSON output.
 
     Args:
-        engine: 'glm-ocr' or 'docling_standard'
+        engine: 'docling_standard' (the only engine; kept as a parameter for the notebooks)
         corpus_filter: 'all', 'syone_corp', or 'hardware_manuals'
 
     Returns:
@@ -76,8 +73,6 @@ def run_docling_parsing(engine: str, corpus_filter: str = "all", max_pages: int 
         output_images_dir=EXTRACTED_IMAGES_DIR,
         ocr_engine=engine,
         max_pages=max_pages,
-        glm_backend=glm_backend,
-        glm_api_url=glm_url,
     )
 
     total_parsed = 0
@@ -100,9 +95,8 @@ def run_docling_parsing(engine: str, corpus_filter: str = "all", max_pages: int 
             try:
                 parsed = parser.parse_document(file_path, corpus=corpus_name)
 
-                # Filename encodes both the document and the engine used
-                engine_tag = "glm_ocr" if "glm" in engine else "standard"
-                out_file = DOCLING_OUTPUT_DIR / f"{corpus_name}__{file_path.stem}__{engine_tag}.json"
+                # Filename encodes the document and the engine used
+                out_file = DOCLING_OUTPUT_DIR / f"{corpus_name}__{file_path.stem}__standard.json"
 
                 # Tables may contain non-JSON-serializable types — convert safely
                 safe_tables = []
@@ -148,15 +142,8 @@ if __name__ == "__main__":
         epilog="""
 Examples:
   python -m backend.ingestion.run_docling --list
-  python -m backend.ingestion.run_docling --engine glm-ocr
-  python -m backend.ingestion.run_docling --engine docling_standard --corpus hardware_manuals
+  python -m backend.ingestion.run_docling --corpus hardware_manuals
         """
-    )
-    arg_parser.add_argument(
-        "--engine",
-        choices=["glm-ocr", "docling_standard"],
-        default="docling_standard",
-        help="OCR/parsing engine to use (default: docling_standard)"
     )
     arg_parser.add_argument(
         "--corpus",
@@ -168,18 +155,7 @@ Examples:
         "--max-pages",
         type=int,
         default=None,
-        help="Parse only the first N pages of each PDF. Recommended with glm-ocr (a 0.9B VLM runs once per page: ~6 min/page on a laptop CPU)"
-    )
-    arg_parser.add_argument(
-        "--glm-backend",
-        choices=["transformers", "lmstudio", "ollama"],
-        default=None,
-        help="Where GLM-OCR runs. transformers = inside Docling on the CPU (~6 min/page); lmstudio/ollama = a local server using the GPU (~7 s/page): load `glm-ocr` there first (env GLM_OCR_BACKEND)"
-    )
-    arg_parser.add_argument(
-        "--glm-url",
-        default=None,
-        help="Chat-completions URL of the local server (default: LM Studio http://localhost:1234/v1/chat/completions, Ollama http://localhost:11434/v1/chat/completions)"
+        help="Parse only the first N pages of each PDF (a quick test)"
     )
     arg_parser.add_argument(
         "--list",
@@ -193,4 +169,4 @@ Examples:
         list_raw_files()
         sys.exit(0)
 
-    run_docling_parsing(args.engine, args.corpus, args.max_pages, args.glm_backend, args.glm_url)
+    run_docling_parsing("docling_standard", args.corpus, args.max_pages)

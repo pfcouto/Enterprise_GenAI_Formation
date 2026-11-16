@@ -152,3 +152,34 @@ litellm_settings:
 
 general_settings:
   master_key: "os.environ/LITELLM_MASTER_KEY"
+
+# ------------------------------------------------------------------------------------------------
+# Guardrails: checks the gateway runs on a request before (pre_call) it reaches any model.
+# Both are off by default (default_on: false) and switched on per request with
+#   "guardrails": ["formation-no-code"]        in the JSON body, or per virtual key.
+# Set default_on: true (then docker compose up -d --force-recreate litellm) to enforce one for every caller.
+# Built into LiteLLM (litellm_content_filter): regex and keyword rules, no extra model, no cost.
+# ------------------------------------------------------------------------------------------------
+guardrails:
+  - guardrail_name: formation-no-code            # policy: this assistant answers from the docs; it does not write code
+    litellm_params:
+      guardrail: litellm_content_filter
+      mode: pre_call
+      default_on: false
+      patterns:
+        - pattern_type: regex
+          name: code_generation_request
+          pattern: '(?i)\b(write|generate|create|give me|show me|implement)\b[^.?!\n]{0,60}\b(code|script|function|class|program|snippet|regex)\b'
+          action: BLOCK
+  - guardrail_name: formation-mask-pii           # personal data is masked before it leaves the company
+    litellm_params:
+      guardrail: litellm_content_filter
+      mode: pre_call
+      default_on: false
+      patterns:
+        - pattern_type: prebuilt
+          pattern_name: email
+          action: MASK
+        - pattern_type: prebuilt
+          pattern_name: credit_card
+          action: MASK
