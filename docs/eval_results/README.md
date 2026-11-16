@@ -93,4 +93,5 @@ So `formation-qwen` uses `reasoning_effort: "none"` (verified through the gatewa
 * Both miss `syone_013` and `hw_009`: retrieval misses (above), not the model.
 * The one extra keyword failure of Qwen, `syone_009`, is a correct answer: it says "Portugal ... GMT timezone" where the keyword list wants "European". The judge gives it 0.8. Same lesson as `syone_014`: keywords are strict, read the failures.
 * Largest judge disagreements: `syone_010` (Qwen 0.4, DeepSeek 0.9: Qwen left out facts) and `hw_001`, `syone_004` (Qwen 0.9-0.95, DeepSeek 0.6).
+* **Endpoint note:** Zen's model list documents Qwen on its Anthropic-style endpoint, with effort levels `low`, `medium`, `xhigh` and an on/off toggle. The OpenAI-style endpoint used here works and `none` switches thinking off (0 thinking tokens measured), but neither is in that list: re-check after a Zen update.
 * **Verdict:** comparable quality on this set at 2.4 times lower cost, but slower per answer here. Not tested: Track B (tool calling) and the judge roles. One model, one run, 34 questions: a reason to try it, not proof.
