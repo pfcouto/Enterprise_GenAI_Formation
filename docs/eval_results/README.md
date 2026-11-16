@@ -63,3 +63,34 @@ Adding the figure rule (`include the exact markdown image line when a figure sho
 Haiku was re-graded with its thinking switched off (`thinking: {type: disabled}` in the gateway config; before: 0.81 / 0.89, agreeing 32 and 33 times). Cases worth reading (details in the speaker guide, section 5.1b): `syone_014` (a correct refusal the keyword regex missed: scorer fixed), `hw_012` Track B (wrong order of steps and wrong command: keywords pass, DeepSeek 0.3), `syone_011` Track A (both judges see the same missing fact, grades 0.4 and 0.8), and judge noise (the DeepSeek judge gave the same answer 0.1 to 0.8 over 12 calls at temperature 0).
 
 **Data drift note.** The reference full run was made on 2026-10-23, before the Syone figures were renamed (`about-1.png` became `syone-footprint-map.png`). Re-scoring the stored `syone_002` answers today fails the figure check because they cite the old name; a live run passes. Re-run the evaluation after every data change: this is exactly the drift it exists to catch.
+
+#### A cheaper answer model: Qwen3.8 Flash against DeepSeek V4.1 Flash, Track A (2026-11-16)
+
+Same 34 questions, same retrieval (the 2,087-chunk index of Docling 2.150.1), each model pinned (no failover) through the gateway: `formation-qwen` and `formation-opencode` (DeepSeek). Files: `full_graph_rag_formation-qwen.jsonl`, `full_graph_rag_formation-opencode.jsonl` and their `judge_*` grades (Haiku only: it belongs to neither family, so neither model gets a self-preference bonus).
+
+**Thinking level first.** Qwen thinks by default. On six representative Track A prompts (exact code, table, multi-hop, figure, FAQ, unanswerable), each level passed 6/6 on keywords; only the cost changed:
+
+| `reasoning_effort` | Thinking tokens per answer | Output tokens | Seconds |
+|---|---:|---:|---:|
+| default (not set) | 394 (up to 1,454 on the figure question) | 533 | 8.1 |
+| `none` | **0** | **145** | **2.8** |
+| `minimal` / `low` / `medium` / `high` | 192 / 183 / 290 / 339 | 480 / 462 / 642 / 444 | 6.1 / 5.8 / 7.9 / 6.9 |
+
+So `formation-qwen` uses `reasoning_effort: "none"` (verified through the gateway: no thinking tokens).
+
+**The 34 questions:**
+
+| | DeepSeek V4.1 Flash | Qwen3.8 Flash (`none`) |
+|---|---:|---:|
+| Price per 1M tokens (in / out) | $0.30 / $1.20 | $0.15 / $0.47 |
+| Keyword verdict | 32/34 | 31/34 |
+| Haiku judge: mean grade | 0.84 | 0.87 |
+| Haiku judge: answers graded 0.5 or more | 32/34 | 32/34 |
+| Input / output tokens per answer | 2,219 / 245 | 1,848 / 138 |
+| Cost, all 34 answers | $0.033 | $0.014 (2.4 times cheaper) |
+| Model latency per answer (mean) | 1.4 s | 2.7 s |
+
+* Both miss `syone_013` and `hw_009`: retrieval misses (above), not the model.
+* The one extra keyword failure of Qwen, `syone_009`, is a correct answer: it says "Portugal ... GMT timezone" where the keyword list wants "European". The judge gives it 0.8. Same lesson as `syone_014`: keywords are strict, read the failures.
+* Largest judge disagreements: `syone_010` (Qwen 0.4, DeepSeek 0.9: Qwen left out facts) and `hw_001`, `syone_004` (Qwen 0.9-0.95, DeepSeek 0.6).
+* **Verdict:** comparable quality on this set at 2.4 times lower cost, but slower per answer here. Not tested: Track B (tool calling) and the judge roles. One model, one run, 34 questions: a reason to try it, not proof.
