@@ -26,6 +26,24 @@ const judgeName = (alias: string) => alias.replace("formation-judge-", "");
 
 const pct = (v: number | null | undefined) => (v === null || v === undefined ? "n/a" : `${(v * 100).toFixed(0)}%`);
 
+const TRACK = { graph_rag: "Track A (GraphRAG + BM25)", okf_agent: "Track B (OKF agent)" } as Record<string, string>;
+const CORPUS = { all: "both knowledge bases", syone_corp: "Syone website", hardware_manuals: "Aurora manuals" } as Record<string, string>;
+const QUESTIONS = (limit: number) => (limit === -1 ? "demo slice" : limit > 0 ? `first ${limit}` : "all");
+const secs = (ms: number) => (ms < 10000 ? `${(ms / 1000).toFixed(1)} s` : `${Math.round(ms / 1000)} s`);
+
+/** One sentence saying what a run actually did: which pipeline, with or without an LLM, on which questions. */
+function describeRun(r: EvalResult, info: { questions: string; ms: number }) {
+  const what = r.mode === "retrieval"
+    ? (r.pipeline === "okf_agent"
+        ? "retrieval only: the agent's scripted plan (list topics, grep, read), no LLM"
+        : "retrieval only: hybrid search + graph facts, no LLM")
+    : (r.pipeline === "okf_agent"
+        ? `full: the LLM agent chooses the tools and answers (${r.model_used})`
+        : `full: retrieval + one LLM answer per question (${r.model_used})`);
+  const judged = Object.keys(r.avg_judge_scores || {}).length > 0 ? " · judge panel on" : "";
+  return `${TRACK[r.pipeline] || r.pipeline} · ${what} · ${info.questions} questions (${r.total_tests}) from ${CORPUS[r.corpus] || r.corpus}${judged} · ${secs(info.ms)}`;
+}
+
 export default function EvalPage() {
   const [evalResult, setEvalResult] = useState<EvalResult | null>(null);
   const [optimizer, setOptimizer] = useState<any>(null);
@@ -37,11 +55,15 @@ export default function EvalPage() {
   const [mode, setMode] = useState("retrieval");
   const [limit, setLimit] = useState(0); // 0 = all, -1 = the demo slice
   const [judge, setJudge] = useState(false);
+  const [runInfo, setRunInfo] = useState<{ questions: string; ms: number } | null>(null);
+  const [optMs, setOptMs] = useState<number | null>(null);
 
   const runBenchmark = async () => {
     setRunning(true);
     setEvalResult(null);
     setError(null);
+    const started = Date.now();
+    const questions = QUESTIONS(limit);
     try {
       const res = await fetch(`${API}/api/eval/run`, {
         method: "POST",
@@ -54,6 +76,7 @@ export default function EvalPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
       setEvalResult(data);
+      setRunInfo({ questions, ms: Date.now() - started });
     } catch (e: any) {
       setError(e.message);
     } finally {
@@ -65,11 +88,13 @@ export default function EvalPage() {
     setRunningOpt(true);
     setOptimizer(null);
     setError(null);
+    const started = Date.now();
     try {
       const res = await fetch(`${API}/api/eval/optimize-prompts`, { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
       setOptimizer(data);
+      setOptMs(Date.now() - started);
     } catch (e: any) {
       setError(e.message);
     } finally {
@@ -97,7 +122,7 @@ export default function EvalPage() {
       <div className="flex flex-wrap items-end gap-3 bg-slate-900/60 border border-slate-800 rounded-xl p-4">
         <label className="text-[11px] text-slate-400 flex flex-col gap-1">Mode
           <select className={sel} value={mode} onChange={(e) => setMode(e.target.value)} data-testid="eval-mode">
-            <option value="retrieval">retrieval only (no LLM)</option>
+            <option value="retrieval">retrieval only (no LLM; Track B uses a scripted plan)</option>
             <option value="full">full (retrieval + answer)</option>
           </select></label>
         <label className="text-[11px] text-slate-400 flex flex-col gap-1">Track
@@ -135,6 +160,11 @@ export default function EvalPage() {
         </div>
       )}
 
+      {evalResult && runInfo && (
+        <div className="text-xs text-slate-300 bg-slate-900/60 border border-slate-800 rounded-lg px-3 py-2 font-mono" data-testid="eval-run-info">
+          <span className="text-slate-500">This run: </span>{describeRun(evalResult, runInfo)}
+        </div>
+      )}
       {evalResult && (
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4" data-testid="eval-summary">
           {[
@@ -170,6 +200,12 @@ export default function EvalPage() {
       {optimizer && (
         <div className="bg-slate-900 border border-blue-800/60 p-5 rounded-2xl shadow-xl space-y-3">
           <div className="font-bold text-sm text-blue-400">Prompt variants scored on the real pipeline (best: {optimizer.best_variant})</div>
+          <div className="text-xs text-slate-300 font-mono" data-testid="optimizer-run-info">
+            <span className="text-slate-500">This run: </span>Track A (GraphRAG + BM25) · full: retrieval + one LLM answer per question (formation-fast) ·
+            {" "}{optimizer.history.length} system prompts × {optimizer.dataset_slice.length} questions = {optimizer.history.length * optimizer.dataset_slice.length} answers
+            {" "}· its own questions, mostly about figures: {optimizer.dataset_slice.join(", ")} · keyword + figure scoring{optMs !== null ? ` · ${secs(optMs)}` : ""}
+          </div>
+          <div className="text-[11px] text-slate-500">Scores move from run to run (models are not deterministic); compare the ranking, and run it more than once.</div>
           {optimizer.history.map((h: any) => (
             <div key={h.variant} className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono">
               <div className="flex justify-between text-slate-400 mb-1"><span className="text-blue-400 font-bold">{h.variant}</span><span className="text-green-400">{h.passed} passed</span></div>
