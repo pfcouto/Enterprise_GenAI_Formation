@@ -37,7 +37,7 @@ New to the console? Its **How it works** page (<http://localhost:13002/how-it-wo
 ## 1. Setup
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/pfcouto/Enterprise_GenAI_Formation.git
 cd Enterprise_GenAI_Formation
 cp .env.example .env                       # then put your key in it (next section)
 

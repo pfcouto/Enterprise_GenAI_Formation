@@ -36,7 +36,7 @@ Both are committed: a fresh clone works offline. Golden set: **34 verified quest
 ## Quick start (about 15 minutes, 10 GB disk, Docker Desktop)
 
 ```bash
-git clone <repo-url> && cd Enterprise_GenAI_Formation
+git clone https://github.com/pfcouto/Enterprise_GenAI_Formation.git && cd Enterprise_GenAI_Formation
 cp .env.example .env                       # put a free OpenRouter key in it (see below)
 
 uv venv --python 3.13 .venv && source .venv/bin/activate   # Python 3.11-3.14; 3.15 is too new for onnxruntime
