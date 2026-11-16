@@ -1,0 +1,24 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: "litellm-gateway"
+    metrics_path: "/metrics"
+    authorization:
+      # LiteLLM protects /metrics with the master key. docker-compose writes LITELLM_MASTER_KEY from .env into this
+      # file when Prometheus starts, so changing the key in .env is enough (no second copy to keep in sync).
+      credentials_file: /tmp/litellm_master_key
+    static_configs:
+      - targets: ["litellm:4000"]
+        labels:
+          service: "ai-gateway"
+          env: "formation"
+
+  - job_name: "syone-backend"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["backend:8000"]
+        labels:
+          service: "fastapi-backend"
+          env: "formation"

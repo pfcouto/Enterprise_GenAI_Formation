@@ -1,0 +1,47 @@
+{
+  "F1_rack_elevation.png": {
+    "figure": "F1",
+    "title": "Rack elevation of the AOR-3 (U01 at the bottom)",
+    "description": "Rack elevation of the AOR-3. U01: Cable management / blank panel. U02-U19: Compute sleds CS-2U x9 (sled 1 at U02-U03 ... sled 9 at U18-U19). U20-U22: Power shelf PS-3000 (rectifiers R1-R6). U23: Top-of-rack switch AS-100G. U24: Patch panel (QSFP28 breakout). U25-U42: Reserved / future expansion."
+  },
+  "F2_front_panel_led_legend.png": {
+    "figure": "F2",
+    "title": "Front-panel LED legend: PWR, NET, BMC and ID LEDs",
+    "description": "Front-panel LED legend with four LEDs (PWR, NET, BMC, ID) and their states. PWR LED Solid green: Normal operation: 48 V busbar present, ripple below 50 mV, all rails good.; PWR LED Blinking amber (1 Hz): Thermal warning: temperature above 75 C. Fans forced to 100 %, CPU throttled.; PWR LED Solid red: Critical fault: rail overvoltage or short (for example 0x4A7B_VRM_OVERVOLT). Immediate power cutoff.; PWR LED Off: No 48 V input or sled not seated.; NET LED Solid green: 100 GbE link up at full speed.; NET LED Blinking green: Link up, traffic present.; NET LED Solid amber: Link up but degraded to 25 GbE or 40 GbE.; NET LED Off: No link (see fault code 0xC029_ETH_PHY_LINKDN).; BMC LED Blinking blue (0.5 Hz): BMC healthy and polling sensors.; BMC LED Solid blue: BMC booting or firmware update in progress. Do not power cycle.; BMC LED Off: BMC unresponsive (see fault code 0x99A0_PSU_COMM_LOST).; ID LED Solid white: Locator active: a technician or the BMC asked to identify this sled.; ID LED Off: Locator inactive."
+  },
+  "F3_power_distribution_block.png": {
+    "figure": "F3",
+    "title": "Power distribution: 400 V AC to rectifiers, 48 V busbar, 12 V PoL",
+    "description": "Power distribution block diagram: 3-phase 400 V AC mains feed the PS-3000 power shelf (six 3 kW rectifiers R1-R6, N+1), which feeds a 48 V DC busbar (range 44.0-52.0 V, OVP cutoff 54.2 V, UVP cutoff 40.5 V) through PDB fuse F2 (30 A) to each compute sled's PoL stage (48 V to 12 V). The BMC polls PMBus every 2 seconds."
+  },
+  "F4_switch_port_map.png": {
+    "figure": "F4",
+    "title": "AS-100G port map: QSFP28 uplinks, server ports, MGMT0 and console",
+    "description": "AS-100G port map. Top row QSFP28_01-QSFP28_16 are uplinks to the spine; bottom row QSFP28_17-QSFP28_32 are server ports. MGMT0 (RJ45 1GbE, MGMT_VLAN_102) and the serial console (RJ45, 115200 8N1) are on the left. ASIC Aurora TS-3200, 3.2 Tbps."
+  },
+  "F5_thermal_fan_curve.png": {
+    "figure": "F5",
+    "title": "Fan duty versus temperature with warning and critical thresholds",
+    "description": "Line chart of fan duty (%) versus CPU temperature (C): 30 C 30 %, 40 C 40 %, 50 C 55 %, 60 C 70 %, 70 C 85 %, 75 C 100 %, 90 C 100 %. Warning threshold at 75 C (blinking amber, 0x8F10_TEMP_WARN); critical threshold and emergency shutdown at 90 C (0x8F11_TEMP_CRIT)."
+  },
+  "F6_troubleshooting_flowchart_amber.png": {
+    "figure": "F6",
+    "title": "Troubleshooting flowchart for a blinking amber PWR LED",
+    "description": "Flowchart for a blinking amber PWR LED: read the SEL with bmc-cli sel list, then branch by code family - thermal (0x8F10, 0x8F20): check airflow; fan (0x8F01): swap Fan Module FM4; power (0x4A7C, 0x4B10): check rectifiers R1-R6; memory/storage (0x10F0, 0x2B31): reseat DIMM_A7 or NVMe bay 2; other (0xC055, 0x6E20): switch fan trays or quarantine the sled. Verify LED is solid green; otherwise escalate to Technician L2 or Engineer."
+  },
+  "F7_network_topology_vlans.png": {
+    "figure": "F7",
+    "title": "Leaf-spine topology with VLANs 101-104",
+    "description": "Leaf-spine topology: two 400G spines SP-1 and SP-2 connect to the AS-100G top-of-rack switch (uplinks QSFP28_01-16), which connects the compute sleds (QSFP28_17 onward). MGMT0 carries MGMT_VLAN_102 for BMCs. VLANs: 101 PROD_DATA; 102 MGMT_VLAN_102; 103 STORAGE; 104 PXE_PROVISION."
+  },
+  "F8_dimm_slot_layout.png": {
+    "figure": "F8",
+    "title": "Compute sled DIMM slot layout (CPU0 A1-A8, CPU1 B1-B8)",
+    "description": "DIMM slot layout: CPU0 has slots A1-A8, CPU1 has slots B1-B8. Highlighted: DIMM_A2 (0x10E4_ECC_MULTI_BIT, red), DIMM_A7 (0x10F0_DIMM_TRAINING_FAIL, amber), DIMM_B5 (0x10E5_ECC_SINGLE_BIT, blue)."
+  },
+  "F9_maintenance_schedule.png": {
+    "figure": "F9",
+    "title": "Preventive maintenance schedule by interval",
+    "description": "Bar chart of preventive maintenance tasks and planned minutes: Visual LED and cable inspection (Weekly, Technician L1, 15 min); Clean fan wall filters / dust check (Monthly, Technician L1, 30 min); Optical transceiver clean and inspect (Quarterly, Technician L2, 45 min); Rectifier module load test (Quarterly, Technician L2, 60 min); BMC and BIOS firmware review (Semi-annual, Engineer, 90 min); Busbar torque check (14 N\u00b7m) (Annual, Engineer, 120 min); Full thermal survey with IR camera (Annual, Engineer, 180 min)."
+  }
+}

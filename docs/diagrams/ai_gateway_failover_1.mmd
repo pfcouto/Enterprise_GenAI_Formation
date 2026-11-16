@@ -1,0 +1,7 @@
+flowchart LR
+    APP["Your services<br/>model = formation-fast"] --> GW["LiteLLM gateway"]
+    GW -->|"1. try order 1"| A["Provider A<br/>(OpenCode Zen: deepseek-v4.1-flash)"]
+    GW -.->|"429 / 5xx -> order 2"| B["Provider B<br/>(OpenRouter free models,<br/>Groq, Gemini, Mistral...)"]
+    GW -.->|"alias failed -> fallbacks"| R["formation-reasoning"]
+    GW -.->|"last resort"| L["formation-local<br/>(LM Studio / Ollama)"]
+    GW -.->|"everything failed"| X["app: extractive answer,<br/>never an invented one"]

@@ -1,0 +1,20 @@
+# Everything you need on YOUR machine (host) for the formation: scraping, parsing, notebooks.
+# The API container installs only backend/requirements.txt.
+-r backend/requirements.txt
+
+# Stage 1: acquisition
+beautifulsoup4>=4.12.3
+pillow>=11.0.0
+reportlab>=4.2.5            # used only to rebuild the Aurora manuals (scripts/dataset_builder)
+matplotlib>=3.9.0           # used only to rebuild the Aurora figures
+
+# Stage 2/3: parsing (Docling standard + optional GLM-OCR VLM engine) and OKF compilation
+docling>=2.100.0
+
+# Notebooks and agent / LLMOps demos
+jupyterlab>=4.2
+ipykernel
+pandas>=2.2.0
+deepagents>=0.7.0           # LangChain Deep Agents (notebook 03, optional)
+langchain-openai>=0.3.0
+opik>=1.4.0                 # notebook 05, optional

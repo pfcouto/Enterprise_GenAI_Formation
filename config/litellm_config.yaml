@@ -1,0 +1,154 @@
+# LiteLLM gateway: stable aliases (formation-*) in front of whatever free models exist this month.
+# NOTE: free OpenRouter accounts are capped at 50 free-model requests per DAY (1,000 with $10 credit) and
+# 20 per minute: that is exactly why a gateway needs failover across providers. Free model lists change every few
+# weeks: check the live list with `GET /api/models/free`
+# (or http://localhost:13002/models) and edit the `model:` lines below when a model disappears.
+# =====================================================================================================
+# THE AI GATEWAY IN ONE FILE
+#   * Services call ALIASES (formation-fast ...). Providers, keys, limits and failover live here only.
+#   * FAILOVER has three layers (read them top to bottom, each one catches what the previous one missed):
+#       1. several deployments under ONE alias, tried in `order`  (provider A, then provider B ...)
+#       2. COOLDOWN: a deployment that returns 429 / 5xx is taken out of rotation for `cooldown_time` seconds,
+#          so the next requests do not even try it
+#       3. `fallbacks`: if the whole alias fails, try another alias (another model family, then a local model)
+#   * Prove it works without burning quota:  alias `formation-failover-drill`  (see notebook 04).
+#   * THINKING LEVEL: these models "think" (hidden reasoning tokens, paid as output) before they answer. A setting here
+#     applies to everyone who calls the alias. Measured on 2026-10-25 (6 calls per setting, same input):
+#       - Claude Haiku 5.5 on Zen thinks ~250 tokens by default; `thinking: {type: disabled}` -> 0, output ~70 % smaller,
+#         and its judge grades are MORE stable. Set below.
+#       - DeepSeek V4.1 Flash on Zen: `reasoning_effort` low / high / default made no measurable difference (medians
+#         724-1,198 tokens, each run ranging ~550-1,950; Zen spreads calls over upstreams that treat the setting
+#         differently), so it is not set. Its ANSWER calls think little anyway (~70 tokens): their cost is the input.
+#       - Nemotron on OpenRouter: `reasoning_effort: low` is accepted; its effect is not measured yet (free daily quota).
+#     `formation-reasoning` keeps the provider default on purpose.
+# =====================================================================================================
+model_list:
+  # --- formation-fast: default alias. Tried in order; any 429 / outage moves on to the next deployment.
+  - model_name: formation-fast
+    litellm_params:
+      model: openai/deepseek-v4.1-flash                       # OpenCode Zen, pay-as-you-go ($0.30 in / $1.20 out per 1M tokens)
+      api_base: https://opencode.ai/inference/openai/v1
+      api_key: "os.environ/OPENCODE_API_KEY"
+      input_cost_per_token: 0.0000003                          # so spend (and per-key budgets) can be tracked
+      output_cost_per_token: 0.0000012
+      order: 1
+  - model_name: formation-fast
+    litellm_params:
+      model: openrouter/nvidia/nemotron-3.5-super-vl:free     # 1M context, tool calling, vision input (free, capped)
+      api_key: "os.environ/OPENROUTER_API_KEY"
+      reasoning_effort: low
+      order: 2
+  - model_name: formation-fast
+    litellm_params:
+      model: openrouter/openrouter/free                       # OpenRouter's own router: any free model that is up
+      api_key: "os.environ/OPENROUTER_API_KEY"
+      order: 3
+  # Add more providers here. Every one below has a free API tier; uncomment, set the key in .env, and CHECK the
+  # model id against the provider's own model list (ids change). Each is one more rung of the failover ladder.
+  # - model_name: formation-fast
+  #   litellm_params: {model: groq/llama-3.3-70b-versatile, api_key: "os.environ/GROQ_API_KEY", order: 4}
+  # - model_name: formation-fast
+  #   litellm_params: {model: gemini/gemini-2.5-flash, api_key: "os.environ/GEMINI_API_KEY", order: 5}
+  # - model_name: formation-fast
+  #   litellm_params: {model: mistral/mistral-small-latest, api_key: "os.environ/MISTRAL_API_KEY", order: 6}
+
+  # --- PINNED aliases: one provider, one specific model, NO failover. Pick them in the UI model selector (or pass
+  #     model="formation-opencode" ...) to demonstrate or debug exactly one provider. Swap the `model:` line to swap the model.
+  - model_name: formation-opencode            # paid (needs OPENCODE_API_KEY with balance)
+    litellm_params:
+      model: openai/deepseek-v4.1-flash
+      api_base: https://opencode.ai/inference/openai/v1
+      api_key: "os.environ/OPENCODE_API_KEY"
+      input_cost_per_token: 0.0000003
+      output_cost_per_token: 0.0000012
+  - model_name: formation-openrouter-free     # free (needs a free OpenRouter account + OPENROUTER_API_KEY)
+    litellm_params:
+      model: openrouter/google/gemma-4-31b-it:free
+      api_key: "os.environ/OPENROUTER_API_KEY"
+
+  # --- formation-reasoning: a different model family for harder questions (and the fallback of formation-fast)
+  - model_name: formation-reasoning
+    litellm_params:
+      model: openrouter/nvidia/nemotron-3-super-120b-a12b:free
+      api_key: "os.environ/OPENROUTER_API_KEY"
+
+  # --- formation-vision: image input
+  - model_name: formation-vision
+    litellm_params:
+      model: openrouter/nvidia/nemotron-3.5-super-vl:free
+      api_key: "os.environ/OPENROUTER_API_KEY"
+
+  # --- formation-local: offline model served by LM Studio (port 1234) or Ollama on YOUR machine; the last resort.
+  - model_name: formation-local
+    litellm_params:
+      model: openai/local-model
+      api_base: "http://host.docker.internal:1234/v1"   # Ollama: http://host.docker.internal:11434/v1
+      api_key: "lm-studio"
+      extra_body:                      # Qwen3-style models: skip the long hidden "thinking" for fast demo answers
+        chat_template_kwargs: {enable_thinking: false}
+
+  # --- JUDGE PANEL (LLM-as-a-judge): three model families grade the same answer. Pinned on purpose, NO fallbacks:
+  #     a judge silently replaced by another model would make the panel's scores meaningless.
+  - model_name: formation-judge-deepseek      # the same model that writes the answers: watch for self-preference
+    litellm_params:
+      model: openai/deepseek-v4.1-flash
+      api_base: https://opencode.ai/inference/openai/v1
+      api_key: "os.environ/OPENCODE_API_KEY"
+      input_cost_per_token: 0.0000003
+      output_cost_per_token: 0.0000012
+  - model_name: formation-judge-haiku         # another family; Zen serves Claude through the Anthropic Messages API
+    litellm_params:
+      model: anthropic/claude-haiku-5-5
+      api_base: https://opencode.ai/inference/anthropic
+      api_key: "os.environ/OPENCODE_API_KEY"
+      input_cost_per_token: 0.0000001         # $0.10 in / $0.50 out per 1M tokens (prompts up to 100k tokens)
+      output_cost_per_token: 0.0000005
+      thinking: {type: disabled}              # measured: 0 thinking tokens, ~100 output tokens per grade, steadier grades
+  - model_name: formation-judge-nemotron      # a free third opinion (OpenRouter free account limits apply)
+    litellm_params:
+      model: openrouter/nvidia/nemotron-3.5-super-vl:free
+      api_key: "os.environ/OPENROUTER_API_KEY"
+      reasoning_effort: low                   # OpenRouter `reasoning.effort` (effect not measured yet); to try: extra_body {reasoning: {enabled: false}}
+
+  # --- formation-failover-drill: a SAFE experiment. Deployment 1 points at a closed port (a simulated outage / quota
+  #     wall); deployment 2 returns a canned answer. Call it and watch the gateway fail over (notebook 04, section 3).
+  - model_name: formation-failover-drill
+    litellm_params:
+      model: openai/simulated-primary
+      api_base: http://127.0.0.1:9/v1
+      api_key: "none"
+      order: 1
+  - model_name: formation-failover-drill
+    litellm_params:
+      model: openai/simulated-secondary
+      api_key: "none"
+      mock_response: "SERVED BY THE SECONDARY DEPLOYMENT: the primary was unreachable and the gateway failed over."
+      order: 2
+
+  # --- wildcard: lets the UI send ANY openrouter model id picked in the Free Model Explorer
+  - model_name: "openrouter/*"
+    litellm_params:
+      model: "openrouter/*"
+      api_key: "os.environ/OPENROUTER_API_KEY"
+
+router_settings:
+  enable_pre_call_checks: true       # required for `order:` (preference between deployments of one alias)
+  num_retries: 2                     # layer 1: a failed call is retried on the next deployment of the alias
+  retry_after: 2
+  timeout: 300
+  allowed_fails: 1                   # layer 2: one failure (429/5xx) ...
+  cooldown_time: 30                  # ... and the deployment sits out for 30 s
+  fallbacks:                         # layer 3: the whole alias failed -> try another alias
+    - formation-fast: ["formation-reasoning", "formation-local"]
+    - formation-reasoning: ["formation-fast", "formation-local"]
+    - formation-vision: ["formation-fast"]
+
+litellm_settings:
+  drop_params: true                  # free models reject some OpenAI params; drop instead of failing
+  success_callback: ["langfuse"]     # traces -> Langfuse (keys come from the environment)
+  failure_callback: ["langfuse"]
+  callbacks: ["prometheus"]          # /metrics -> Prometheus -> Grafana
+  telemetry: false
+
+general_settings:
+  master_key: "os.environ/LITELLM_MASTER_KEY"

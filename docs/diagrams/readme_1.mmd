@@ -1,0 +1,18 @@
+flowchart TD
+    subgraph Acquire["1. Acquire"]
+        WEB["syone.com crawl"] --> RAW[("data/raw_*")]
+        PDF["Aurora PDFs + figures"] --> RAW
+    end
+    RAW --> DOC["2. Docling parse<br/>(standard | GLM-OCR)"]
+    DOC --> OKF[("3. OKF store<br/>Markdown + YAML frontmatter")]
+    OKF --> A["Track A: Qdrant (dense + BM25) + Neo4j graph"]
+    OKF --> B["Track B: agent tools<br/>list / grep / read / follow links"]
+    A --> API["FastAPI backend :8000"]
+    B --> API
+    UI["Next.js UI :3002"] --> API
+    API --> GW["LiteLLM gateway :4000<br/>formation-fast / -reasoning / -local / -judge-*"]
+    GW -->|"order 1"| ZEN["OpenCode Zen<br/>deepseek-v4.1-flash (paid)"]
+    GW -->|"on 429 / outage"| OR["OpenRouter free models"]
+    GW -->|"last resort"| LOCAL["LM Studio / Ollama"]
+    GW -.traces.-> LF["Langfuse :3000"]
+    GW -.metrics.-> PROM["Prometheus :9090 -> Grafana :3001"]

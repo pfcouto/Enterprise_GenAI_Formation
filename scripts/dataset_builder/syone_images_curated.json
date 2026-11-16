@@ -1,0 +1,26 @@
+{
+  "https://www.syone.com/hs-fs/hubfs/footprint-map.png": {
+    "caption": "Syone footprint map (countries served, highlighted in green)",
+    "kind": "map",
+    "description": "Syone footprint map: a dotted world map in which the countries where Syone has delivered projects are highlighted in green: western Iberia (Portugal), the United Kingdom, central-western Europe (Belgium, Germany, Switzerland), Scandinavia (Norway, Denmark, Sweden), the Cape Verde islands in the Atlantic and Mozambique in southern Africa. The page text lists the same ten countries and says Syone has delivered solutions in 15+ countries.",
+    "file": "syone-footprint-map"
+  },
+  "https://www.syone.com/hs-fs/hubfs/ezsearch%20(1).png": {
+    "caption": "ezSearch promotional banner: Your Team's AI Assistant",
+    "kind": "banner-with-text",
+    "description": "ezSearch promotional banner: 'ezSearch - Your Team's AI Assistant'. A laptop shows the ezSearch chat interface; three ticked benefits are listed: 'Find what you need', 'Connect with the right people', 'Get things done'.",
+    "file": "ezsearch-banner"
+  },
+  "https://www.syone.com/hs-fs/hubfs/Resource%20-%20Elasticstack.jpg": {
+    "caption": "Elastic Stack layer diagram (Kibana, Elasticsearch, Beats, Logstash)",
+    "kind": "diagram",
+    "description": "Elastic Stack layer diagram with four stacked layers from top to bottom: 'Shaping and visualization' (Kibana), 'Analytical capability' (Elasticsearch), 'Data parsing' (Beats) and 'Data shipping' (Logstash).",
+    "file": "elastic-stack-layers"
+  },
+  "https://www.syone.com/hs-fs/hubfs/Formato%20Blog%20%281%29.png": {
+    "caption": "Zabbix Meetup '26 poster: Connecting Odemira",
+    "kind": "poster-with-text",
+    "description": "Poster of the Zabbix Meetup '26 (English session): talk 'Connecting Odemira: Modernizing public services with Zabbix', presented by Vitor Carvalho, Senior Account Manager at Syone.",
+    "file": "zabbix-meetup-2026-poster"
+  }
+}

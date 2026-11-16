@@ -1,0 +1,13 @@
+flowchart LR
+    W["syone.com<br/>(sitemap.xml)"] -->|scrape_syone.py| R1["data/raw_syone_corp/*.md"]
+    S["aurora/spec.py<br/>(single source of truth)"] --> F["9 figures (matplotlib)"]
+    S --> M["8 manuals (written from the spec)"]
+    F --> P["8 PDFs (ReportLab)"]
+    M --> P
+    P --> R2["data/raw_hardware_manuals/*.pdf"]
+    R1 --> D["Docling parse<br/>data/docling_output/*.json"]
+    R2 --> D
+    D --> O["OKF compile<br/>data/okf_store/{corpus}/*.md + INDEX.md"]
+    O --> Q["Qdrant: dense + BM25"]
+    O --> N["Neo4j: entities + relations"]
+    O --> A["OKF agent: grep / read / follow links"]

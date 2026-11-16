@@ -1,0 +1,18 @@
+# Runtime dependencies of the API container (kept small on purpose: no torch, no docling).
+# Ingestion/parsing tools (Docling, ReportLab...) live in the root requirements.txt and run on the host.
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.10.0
+httpx>=0.28.0
+prometheus-client>=0.21.0
+pyyaml>=6.0.2
+
+# Vector + graph databases
+qdrant-client>=1.12.0
+neo4j>=5.26.0
+
+# Local embeddings: dense (bge-small) + sparse BM25, ONNX runtime (CPU)
+fastembed>=0.4.0
+
+# Scores pushed to Langfuse (server v2 in docker-compose); the v3+ SDK needs a different server stack
+langfuse>=2.57,<3

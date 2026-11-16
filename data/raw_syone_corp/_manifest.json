@@ -1,0 +1,916 @@
+{
+  "scraped_at": "2026-10-20T00:01:39.185498+00:00",
+  "profile": "core",
+  "source": "https://www.syone.com/sitemap.xml",
+  "pages_ok": 79,
+  "pages_failed": 0,
+  "pages_skipped": 13,
+  "images": 7,
+  "sitewide_images_dropped": 28,
+  "pages": [
+    {
+      "url": "https://www.syone.com/how-we-do-it/turnkey-projects",
+      "slug": "how-we-do-it-turnkey-projects",
+      "section": "how-we-do-it",
+      "title": "End-to-end IT project delivery. No extra workload.",
+      "status": "ok",
+      "words": 980,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/partners/red-hat-premier-partner",
+      "slug": "partners-red-hat-premier-partner",
+      "section": "partners",
+      "title": "Certified Red Hat expertise to scale your business",
+      "status": "ok",
+      "words": 718,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/ezsearch-syone",
+      "slug": "ezsearch-syone",
+      "section": "ezsearch-syone",
+      "title": "Your Team's AI Assistant powered by Syone",
+      "status": "ok",
+      "words": 616,
+      "images": [
+        {
+          "file": "ezsearch-banner.jpg",
+          "alt": "ezSearch promotional banner: Your Team's AI Assistant",
+          "description": "ezSearch promotional banner: 'ezSearch - Your Team's AI Assistant'. A laptop shows the ezSearch chat interface; three ticked benefits are listed: 'Find what you need', 'Connect with the right people', 'Get things done'.",
+          "source_url": "https://www.syone.com/hs-fs/hubfs/ezsearch%20(1).png?width=1200&height=628&name=ezsearch%20(1).png"
+        }
+      ],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/about",
+      "slug": "about",
+      "section": "about",
+      "title": "About Syone",
+      "status": "ok",
+      "words": 378,
+      "images": [
+        {
+          "file": "syone-footprint-map.png",
+          "alt": "Syone footprint map (countries served, highlighted in green)",
+          "description": "Syone footprint map: a dotted world map in which the countries where Syone has delivered projects are highlighted in green: western Iberia (Portugal), the United Kingdom, central-western Europe (Belgium, Germany, Switzerland), Scandinavia (Norway, Denmark, Sweden), the Cape Verde islands in the Atlantic and Mozambique in southern Africa. The page text lists the same ten countries and says Syone has delivered solutions in 15+ countries.",
+          "source_url": "https://www.syone.com/hs-fs/hubfs/footprint-map.png?width=1086&height=622&name=footprint-map.png"
+        }
+      ],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com",
+      "slug": "home",
+      "section": "home",
+      "title": "Empowering Digital Transformation with Tech Solutions & IT Outsourcing",
+      "status": "ok",
+      "words": 621,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/how-we-do-it/software-subscriptions",
+      "slug": "how-we-do-it-software-subscriptions",
+      "section": "how-we-do-it",
+      "title": "Software subscriptions that power reliable, scalable IT solutions",
+      "status": "ok",
+      "words": 939,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/news/syone-zabbix-online-meetup",
+      "slug": "news-syone-zabbix-online-meetup",
+      "section": "news",
+      "title": "Syone @ Zabbix Online MeetUp",
+      "status": "ok",
+      "words": 224,
+      "images": [
+        {
+          "file": "zabbix-meetup-2026-poster.jpg",
+          "alt": "Zabbix Meetup '26 poster: Connecting Odemira",
+          "description": "Poster of the Zabbix Meetup '26 (English session): talk 'Connecting Odemira: Modernizing public services with Zabbix', presented by Vitor Carvalho, Senior Account Manager at Syone.",
+          "source_url": "https://www.syone.com/hs-fs/hubfs/Formato%20Blog%20%281%29.png?width=800&height=450&name=Formato%20Blog%20%281%29.png"
+        }
+      ],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/technologies/angular",
+      "slug": "technologies-angular",
+      "section": "technologies",
+      "title": "Enterprise-Ready Web Apps Powered by Angular and Syone",
+      "status": "ok",
+      "words": 646,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/technologies/react",
+      "slug": "technologies-react",
+      "section": "technologies",
+      "title": "Build fast, dynamic, user-driven web apps with React and Syone\u2019s expertise",
+      "status": "ok",
+      "words": 555,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/news/syone-recognized-by-employees-as-one-of-the-best-places-to-work-in-2024",
+      "slug": "news-syone-recognized-by-employees-as-one-of-the-best-places-to-work-in-2024",
+      "section": "news",
+      "title": "Syone Recognized by Employees as One of the Best Places to Work in 2024",
+      "status": "ok",
+      "words": 365,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/what-we-do/digital-transformation",
+      "slug": "what-we-do-digital-transformation",
+      "section": "what-we-do",
+      "title": "Build the digital backbone your business needs to grow.",
+      "status": "ok",
+      "words": 1139,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/technologies/javascript",
+      "slug": "technologies-javascript",
+      "section": "technologies",
+      "title": "Build fast, scalable backends with Syone\u2019s engineering excellence.",
+      "status": "ok",
+      "words": 695,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/syone-recognized-by-employees-as-one-of-the-best-places-to-work-in-2024",
+      "status": "skipped",
+      "reason": "near-duplicate of another page"
+    },
+    {
+      "url": "https://www.syone.com/what-we-do/software-development",
+      "slug": "what-we-do-software-development",
+      "section": "what-we-do",
+      "title": "Software tailored to your business needs.",
+      "status": "ok",
+      "words": 1136,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/news/1st-edition-of-open-source-lisbon-roadshow-empowers-attendees-on-observability",
+      "slug": "news-1st-edition-of-open-source-lisbon-roadshow-empowers-attendees-on-observability",
+      "section": "news",
+      "title": "1st Edition of Open Source Lisbon Roadshow Empowers Attendees on Observability",
+      "status": "ok",
+      "words": 367,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/what-we-do/it-management",
+      "slug": "what-we-do-it-management",
+      "section": "what-we-do",
+      "title": "Take control of your IT operations with secure, efficient, and cost-effective management.",
+      "status": "ok",
+      "words": 1298,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/news/syone-monitored-29500-devices-during-portugals-national-elections",
+      "slug": "news-syone-monitored-29500-devices-during-portugals-national-elections",
+      "section": "news",
+      "title": "Syone monitored 29,500 devices during Portugal\u2019s national elections",
+      "status": "ok",
+      "words": 325,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/technologies/java",
+      "slug": "technologies-java",
+      "section": "technologies",
+      "title": "Build robust and scalable applications with Java and Syone",
+      "status": "ok",
+      "words": 552,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/red-hat",
+      "status": "skipped",
+      "reason": "near-duplicate of another page"
+    },
+    {
+      "url": "https://www.syone.com/news/syone-renews-iso-9001-and-27001-certifications-for-2025",
+      "slug": "news-syone-renews-iso-9001-and-27001-certifications-for-2025",
+      "section": "news",
+      "title": "Syone Renews ISO 9001 and 27001 Certifications for 2025",
+      "status": "ok",
+      "words": 347,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/news",
+      "status": "skipped",
+      "reason": "index/too short"
+    },
+    {
+      "url": "https://www.syone.com/careers",
+      "slug": "careers",
+      "section": "careers",
+      "title": "Build the future with us",
+      "status": "ok",
+      "words": 203,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/what-we-do/data-machine-learning-and-ai",
+      "slug": "what-we-do-data-machine-learning-and-ai",
+      "section": "what-we-do",
+      "title": "Turn your data into a strategic asset with Syone\u2019s expertise in ML & AI.",
+      "status": "ok",
+      "words": 1091,
+      "images": [
+        {
+          "file": "ezsearch-banner.jpg",
+          "alt": "ezSearch promotional banner: Your Team's AI Assistant",
+          "description": "ezSearch promotional banner: 'ezSearch - Your Team's AI Assistant'. A laptop shows the ezSearch chat interface; three ticked benefits are listed: 'Find what you need', 'Connect with the right people', 'Get things done'.",
+          "source_url": "https://www.syone.com/hs-fs/hubfs/ezsearch%20(1).png?width=1200&height=628&name=ezsearch%20(1).png"
+        }
+      ],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/technologies/kotlin",
+      "slug": "technologies-kotlin",
+      "section": "technologies",
+      "title": "Deliver powerful Android apps with Kotlin and Syone",
+      "status": "ok",
+      "words": 432,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/what-we-do/software-subscriptions",
+      "slug": "what-we-do-software-subscriptions",
+      "section": "what-we-do",
+      "title": "Get the most from your software with flexible subscriptions and expert support.",
+      "status": "ok",
+      "words": 1249,
+      "images": [
+        {
+          "file": "elastic-stack-layers.jpg",
+          "alt": "Elastic Stack layer diagram (Kibana, Elasticsearch, Beats, Logstash)",
+          "description": "Elastic Stack layer diagram with four stacked layers from top to bottom: 'Shaping and visualization' (Kibana), 'Analytical capability' (Elasticsearch), 'Data parsing' (Beats) and 'Data shipping' (Logstash).",
+          "source_url": "https://www.syone.com/hs-fs/hubfs/Resource%20-%20Elasticstack.jpg?width=1440&height=732&name=Resource%20-%20Elasticstack.jpg"
+        }
+      ],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/technologies/flutter",
+      "slug": "technologies-flutter",
+      "section": "technologies",
+      "title": "Build Cross-Platform Mobile Apps Faster with Flutter and Syone",
+      "status": "ok",
+      "words": 467,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/partners/elastic-official-partner",
+      "slug": "partners-elastic-official-partner",
+      "section": "partners",
+      "title": "Search. Monitor. Secure. All with Elastic and Syone.",
+      "status": "ok",
+      "words": 855,
+      "images": [
+        {
+          "file": "elastic-stack-layers.jpg",
+          "alt": "Elastic Stack layer diagram (Kibana, Elasticsearch, Beats, Logstash)",
+          "description": "Elastic Stack layer diagram with four stacked layers from top to bottom: 'Shaping and visualization' (Kibana), 'Analytical capability' (Elasticsearch), 'Data parsing' (Beats) and 'Data shipping' (Logstash).",
+          "source_url": "https://www.syone.com/hs-fs/hubfs/Resource%20-%20Elasticstack.jpg?width=1440&height=732&name=Resource%20-%20Elasticstack.jpg"
+        }
+      ],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/news/syone-is-investing-in-cybersecurity-and-forming-a-team-to-safeguard-the-future",
+      "slug": "news-syone-is-investing-in-cybersecurity-and-forming-a-team-to-safeguard-the-future",
+      "section": "news",
+      "title": "Syone is investing in Cybersecurity and forming a team to safeguard the future",
+      "status": "ok",
+      "words": 295,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/content-hub",
+      "status": "skipped",
+      "reason": "index/too short"
+    },
+    {
+      "url": "https://www.syone.com/news/syone-attends-red-hat-partner-day-in-lisbon",
+      "slug": "news-syone-attends-red-hat-partner-day-in-lisbon",
+      "section": "news",
+      "title": "Syone Attends Red Hat Partner Day in Lisbon",
+      "status": "ok",
+      "words": 452,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/news/kick-off-2026-syone",
+      "slug": "news-kick-off-2026-syone",
+      "section": "news",
+      "title": "Kick-Off 2026: Syone highlights 2025 achievements and results while projecting goals for 2026",
+      "status": "ok",
+      "words": 118,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/technologies/swift",
+      "slug": "technologies-swift",
+      "section": "technologies",
+      "title": "Build High-Performance Apple Apps with Swift and Syone",
+      "status": "ok",
+      "words": 484,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/what-we-do/service-desk",
+      "slug": "what-we-do-service-desk",
+      "section": "what-we-do",
+      "title": "IT support tailored to your team's needs",
+      "status": "ok",
+      "words": 1155,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/contact-us",
+      "slug": "contact-us",
+      "section": "contact-us",
+      "title": "Have a question? Our team is ready to help.",
+      "status": "ok",
+      "words": 28,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/social-responsibility-at-syone",
+      "slug": "social-responsibility-at-syone",
+      "section": "social-responsibility-at-syone",
+      "title": "Life @ Syone: in and out",
+      "status": "ok",
+      "words": 288,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/news/golden-hour-in-lisbon-and-porto",
+      "slug": "news-golden-hour-in-lisbon-and-porto",
+      "section": "news",
+      "title": "Golden Hour in Lisbon and Porto",
+      "status": "ok",
+      "words": 173,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/technologies/spring",
+      "slug": "technologies-spring",
+      "section": "technologies",
+      "title": "Build Cloud-Native Java Solutions with Spring Framework",
+      "status": "ok",
+      "words": 652,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/syone-renews-iso-9001-and-27001-certifications-for-2025-maintaining-a-perfect-record",
+      "status": "skipped",
+      "reason": "near-duplicate of another page"
+    },
+    {
+      "url": "https://www.syone.com/suse",
+      "slug": "suse",
+      "section": "suse",
+      "title": "Modern Linux & Kubernetes Environments. Built with SUSE. Delivered by Syone.",
+      "status": "ok",
+      "words": 609,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/what-we-do/observability-and-data-monitoring",
+      "slug": "what-we-do-observability-and-data-monitoring",
+      "section": "what-we-do",
+      "title": "Detect issues faster and improve system reliability with real-time observability and monitoring.",
+      "status": "ok",
+      "words": 1156,
+      "images": [
+        {
+          "file": "elastic-stack-layers.jpg",
+          "alt": "Elastic Stack layer diagram (Kibana, Elasticsearch, Beats, Logstash)",
+          "description": "Elastic Stack layer diagram with four stacked layers from top to bottom: 'Shaping and visualization' (Kibana), 'Analytical capability' (Elasticsearch), 'Data parsing' (Beats) and 'Data shipping' (Logstash).",
+          "source_url": "https://www.syone.com/hs-fs/hubfs/Resource%20-%20Elasticstack.jpg?width=1440&height=732&name=Resource%20-%20Elasticstack.jpg"
+        }
+      ],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/what-we-do/devops",
+      "slug": "what-we-do-devops",
+      "section": "what-we-do",
+      "title": "Move faster from idea to production - without delays or bottlenecks.",
+      "status": "ok",
+      "words": 1141,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/how-we-do-it/nearshore-portugal",
+      "slug": "how-we-do-it-nearshore-portugal",
+      "section": "how-we-do-it",
+      "title": "Stop wasting time on hires that don\u2019t fit. Get skilled tech teams ready to start, from Portugal.",
+      "status": "ok",
+      "words": 1092,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/about-syone",
+      "status": "skipped",
+      "reason": "near-duplicate of another page"
+    },
+    {
+      "url": "https://www.syone.com/camunda",
+      "slug": "camunda",
+      "section": "camunda",
+      "title": "Process Automation Made Simple with Camunda and Syone",
+      "status": "ok",
+      "words": 626,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/news/syone-strengthen-ties-with-polish-portuguese-chamber-of-commerce-with-a-successful-event-about-observability",
+      "slug": "news-syone-strengthen-ties-with-polish-portuguese-chamber-of-commerce-with-a-successful-event-about-observabil",
+      "section": "news",
+      "title": "Syone Strengthen Ties With Polish-Portuguese Chamber Of Commerce with a Successful Event About Observability",
+      "status": "ok",
+      "words": 306,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/partners/microsoft-azure-365",
+      "slug": "partners-microsoft-azure-365",
+      "section": "partners",
+      "title": "Modern Cloud Solutions. Microsoft Technology. Delivered by Syone.",
+      "status": "ok",
+      "words": 1021,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/news/wrap-up-dinner-2025",
+      "slug": "news-wrap-up-dinner-2025",
+      "section": "news",
+      "title": "Wrap-Up Dinner 2025: Celebrating achievements and strengthening Syone\u2019s future goals",
+      "status": "ok",
+      "words": 134,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/partners/gitlab-syone",
+      "slug": "partners-gitlab-syone",
+      "section": "partners",
+      "title": "Streamline DevOps with GitLab and Syone",
+      "status": "ok",
+      "words": 570,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/partners/zabbix-partner",
+      "slug": "partners-zabbix-partner",
+      "section": "partners",
+      "title": "Smarter Monitoring with Zabbix, Delivered by Syone",
+      "status": "ok",
+      "words": 786,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/microsoft",
+      "status": "skipped",
+      "reason": "near-duplicate of another page"
+    },
+    {
+      "url": "https://www.syone.com/news/syone-celebrating-academic-excellence-in-partnership-with-nova-ims",
+      "slug": "news-syone-celebrating-academic-excellence-in-partnership-with-nova-ims",
+      "section": "news",
+      "title": "Syone Celebrating Academic Excellence in Partnership with NOVA IMS",
+      "status": "ok",
+      "words": 310,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/how-we-do-it/managed-services",
+      "slug": "how-we-do-it-managed-services",
+      "section": "how-we-do-it",
+      "title": "Fewer interruptions. More control. Managed IT services for teams that need to focus.",
+      "status": "ok",
+      "words": 1050,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/syone-attends-red-hat-partner-day-in-lisbon-2025",
+      "status": "skipped",
+      "reason": "near-duplicate of another page"
+    },
+    {
+      "url": "https://www.syone.com/transform-your-business-with-microsoft-azure",
+      "slug": "transform-your-business-with-microsoft-azure",
+      "section": "transform-your-business-with-microsoft-azure",
+      "title": "Solu\u00e7\u00f5es modernas em cloud. Tecnologia Microsoft. Fornecidas pela Syone",
+      "status": "ok",
+      "words": 1166,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/partners/syntevo",
+      "slug": "partners-syntevo",
+      "section": "partners",
+      "title": "We are Syntevo Resellers",
+      "status": "ok",
+      "words": 173,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/assure-business-continuity-during-covid-19",
+      "status": "skipped",
+      "reason": "near-duplicate of another page"
+    },
+    {
+      "url": "https://www.syone.com/news-open-source-lisbon-2022-welcome",
+      "status": "skipped",
+      "reason": "index/too short"
+    },
+    {
+      "url": "https://www.syone.com/partners/camunda-certified-partner",
+      "status": "skipped",
+      "reason": "near-duplicate of another page"
+    },
+    {
+      "url": "https://www.syone.com/news/exclusive-champagne-tasting-event-explores-the-future-of-data-management",
+      "slug": "news-exclusive-champagne-tasting-event-explores-the-future-of-data-management",
+      "section": "news",
+      "title": "Exclusive Champagne tasting event explores the future of Data Management",
+      "status": "ok",
+      "words": 394,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/partners/suse-certified-partner",
+      "status": "skipped",
+      "reason": "near-duplicate of another page"
+    },
+    {
+      "url": "https://www.syone.com/news/syone-showcases-ai-powered-framework-at-nova-ims-seminar",
+      "slug": "news-syone-showcases-ai-powered-framework-at-nova-ims-seminar",
+      "section": "news",
+      "title": "Syone Showcases AI-Powered Framework at NOVA IMS Seminar",
+      "status": "ok",
+      "words": 416,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/technologies/c.net",
+      "slug": "technologies-c-net",
+      "section": "technologies",
+      "title": "Develop Secure, Scalable Enterprise Applications with C#/.NET",
+      "status": "ok",
+      "words": 599,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/how-to-build-a-java-keystore-alias-with-a-complete-certificate-chain",
+      "slug": "blog-how-to-build-a-java-keystore-alias-with-a-complete-certificate-chain",
+      "section": "blog",
+      "title": "How to build a Java Keystore alias with a complete certificate chain",
+      "status": "ok",
+      "words": 1430,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/vmware-vs-openshift-virtualizationwhich-platform-wins-in-2025",
+      "slug": "blog-vmware-vs-openshift-virtualizationwhich-platform-wins-in-2025",
+      "section": "blog",
+      "title": "VMware vs OpenShift Virtualization: Which Platform Wins in 2026?",
+      "status": "ok",
+      "words": 2122,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/zabbix-vs.-traditional-monitoring-tools-a-complete-comparison",
+      "slug": "blog-zabbix-vs--traditional-monitoring-tools-a-complete-comparison",
+      "section": "blog",
+      "title": "Zabbix vs. Traditional Monitoring Tools: A Complete Comparison",
+      "status": "ok",
+      "words": 2296,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/what-is-kibana-and-how-to-use-it-with-elasticsearch",
+      "slug": "blog-what-is-kibana-and-how-to-use-it-with-elasticsearch",
+      "section": "blog",
+      "title": "What is Kibana? A 2026 Guide to Elasticsearch Dashboards",
+      "status": "ok",
+      "words": 2187,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog",
+      "status": "skipped",
+      "reason": "index/too short"
+    },
+    {
+      "url": "https://www.syone.com/blog/zabbix-vs-prometheus-which-tool-should-you-choose",
+      "slug": "blog-zabbix-vs-prometheus-which-tool-should-you-choose",
+      "section": "blog",
+      "title": "Zabbix vs Prometheus: which tool should you choose",
+      "status": "ok",
+      "words": 854,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/building-dashboards-with-elasticsearch-and-kibana",
+      "slug": "blog-building-dashboards-with-elasticsearch-and-kibana",
+      "section": "blog",
+      "title": "Kibana Dashboards: Build Real-Time Visualisations with Elasticsearch",
+      "status": "ok",
+      "words": 709,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/opensearch-vs-elasticsearch-what-are-the-differences-and-how-to-choose",
+      "slug": "blog-opensearch-vs-elasticsearch-what-are-the-differences-and-how-to-choose",
+      "section": "blog",
+      "title": "OpenSearch vs Elasticsearch: what are the differences and how to choose?",
+      "status": "ok",
+      "words": 539,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/blog/logstash-what-is-it-and-how-to-use-it-for-data-processing",
+      "slug": "blog-logstash-what-is-it-and-how-to-use-it-for-data-processing",
+      "section": "blog",
+      "title": "Logstash: what is it and how to use it for data processing?",
+      "status": "ok",
+      "words": 442,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/blog/how-to-use-zabbix-for-network-monitoring",
+      "slug": "blog-how-to-use-zabbix-for-network-monitoring",
+      "section": "blog",
+      "title": "How to use Zabbix for network monitoring?",
+      "status": "ok",
+      "words": 597,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/use-cases-for-zabbix-in-the-public-sector-5-real-world-examples",
+      "slug": "blog-use-cases-for-zabbix-in-the-public-sector-5-real-world-examples",
+      "section": "blog",
+      "title": "Use Cases for Zabbix in the Public Sector: 5 Real-World Examples",
+      "status": "ok",
+      "words": 1450,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/blog/what-is-zabbix-and-what-is-it-used-for",
+      "slug": "blog-what-is-zabbix-and-what-is-it-used-for",
+      "section": "blog",
+      "title": "What is Zabbix and what is it used for?",
+      "status": "ok",
+      "words": 791,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/zabbix-how-to-monitor-servers-and-applications-in-real-time",
+      "slug": "blog-zabbix-how-to-monitor-servers-and-applications-in-real-time",
+      "section": "blog",
+      "title": "Zabbix: how to monitor servers and applications in real time",
+      "status": "ok",
+      "words": 582,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/elastic-stack-how-to-integrate-elasticsearch-logstash-and-kibana",
+      "slug": "blog-elastic-stack-how-to-integrate-elasticsearch-logstash-and-kibana",
+      "section": "blog",
+      "title": "Elastic Stack: How to integrate Elasticsearch, Logstash, and Kibana?",
+      "status": "ok",
+      "words": 424,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/blog/building-real-time-dashboards-with-elasticsearch-and-kibana",
+      "slug": "blog-building-real-time-dashboards-with-elasticsearch-and-kibana",
+      "section": "blog",
+      "title": "Building Real-Time Dashboards with Elasticsearch and Kibana",
+      "status": "ok",
+      "words": 1763,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/blog/hire-nearshore-developers-in-belgium-what-to-look-for",
+      "slug": "blog-hire-nearshore-developers-in-belgium-what-to-look-for",
+      "section": "blog",
+      "title": "Hire Nearshore Developers in Belgium: What to Look For",
+      "status": "ok",
+      "words": 1466,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/blog/rhel-9-in-production-security-stability-and-migration-paths",
+      "slug": "blog-rhel-9-in-production-security-stability-and-migration-paths",
+      "section": "blog",
+      "title": "RHEL 9 Migration Guide: Security, Stability and Upgrade Best Practices",
+      "status": "ok",
+      "words": 1787,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/migrating-from-vmware-to-proxmox-what-cios-need-to-know",
+      "slug": "blog-migrating-from-vmware-to-proxmox-what-cios-need-to-know",
+      "section": "blog",
+      "title": "Migrating from VMware to Proxmox: what CIOs need to know",
+      "status": "ok",
+      "words": 1890,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/blog/automating-infrastructure-with-ansible-a-practical-playbook",
+      "slug": "blog-automating-infrastructure-with-ansible-a-practical-playbook",
+      "section": "blog",
+      "title": "Automating Infrastructure with Ansible: A Practical Playbook",
+      "status": "ok",
+      "words": 1363,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/blog/from-local-to-nearshore-the-smart-transition",
+      "slug": "blog-from-local-to-nearshore-the-smart-transition",
+      "section": "blog",
+      "title": "From local to Nearshore: the smart transition",
+      "status": "ok",
+      "words": 1114,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/the-real-roi-of-nearshore-software-development",
+      "slug": "blog-the-real-roi-of-nearshore-software-development",
+      "section": "blog",
+      "title": "The real ROI of Nearshore software development",
+      "status": "ok",
+      "words": 971,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/how-nearshore-enables-faster-digital-transformation",
+      "slug": "blog-how-nearshore-enables-faster-digital-transformation",
+      "section": "blog",
+      "title": "How Nearshore enables faster digital transformation",
+      "status": "ok",
+      "words": 924,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/how-to-scale-your-tech-team-with-nearshore-services",
+      "slug": "blog-how-to-scale-your-tech-team-with-nearshore-services",
+      "section": "blog",
+      "title": "How to scale your tech team with nearshore services",
+      "status": "ok",
+      "words": 848,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/how-nearshore-accelerates-devops-adoption",
+      "slug": "blog-how-nearshore-accelerates-devops-adoption",
+      "section": "blog",
+      "title": "How nearshore accelerates DevOps adoption",
+      "status": "ok",
+      "words": 850,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/nearshore-partnerships-how-to-build-long-term-success",
+      "slug": "blog-nearshore-partnerships-how-to-build-long-term-success",
+      "section": "blog",
+      "title": "Nearshore partnerships: how to build long-term success",
+      "status": "ok",
+      "words": 832,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/why-ctos-choose-portugal-for-nearshore",
+      "slug": "blog-why-ctos-choose-portugal-for-nearshore",
+      "section": "blog",
+      "title": "Why CTOs choose Portugal for Nearshore",
+      "status": "ok",
+      "words": 1028,
+      "images": [],
+      "has_faq": true
+    },
+    {
+      "url": "https://www.syone.com/blog/nearshore-development-services-what-to-look-for-in-a-partner",
+      "slug": "blog-nearshore-development-services-what-to-look-for-in-a-partner",
+      "section": "blog",
+      "title": "Nearshore development services: what to look for in a partner",
+      "status": "ok",
+      "words": 812,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/blog/how-to-choose-the-right-nearshore-software-development-company",
+      "slug": "blog-how-to-choose-the-right-nearshore-software-development-company",
+      "section": "blog",
+      "title": "How to choose the right nearshore software development company",
+      "status": "ok",
+      "words": 760,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/blog/how-ai-and-machine-learning-are-impacting-the-businesses-of-tomorrow",
+      "slug": "blog-how-ai-and-machine-learning-are-impacting-the-businesses-of-tomorrow",
+      "section": "blog",
+      "title": "How AI and Machine Learning are Impacting the Businesses of Tomorrow",
+      "status": "ok",
+      "words": 2145,
+      "images": [],
+      "has_faq": false
+    },
+    {
+      "url": "https://www.syone.com/blog/closer-to-home-greater-impact-how-nearshore-can-help-your-business-grow-1",
+      "slug": "blog-closer-to-home-greater-impact-how-nearshore-can-help-your-business-grow-1",
+      "section": "blog",
+      "title": "Closer to Home, Greater Impact: How nearshore can help",
+      "status": "ok",
+      "words": 774,
+      "images": [],
+      "has_faq": false
+    }
+  ]
+}
