@@ -123,7 +123,7 @@ A newer option is a **vision-language model** that reads a page *image* and writ
 
 **Newer is not better by default: measure on your own documents.** Vision models earn their place on scans, formulas and hard layouts; for born-digital PDFs with tables, the classic pipeline wins here.
 """),
-    md("## 4. Run the full pipeline: Docling -> JSON -> OKF"),
+    md("## 4. Run the full pipeline: Docling -> JSON -> OKF\nThis cell calls exactly what the two pipeline scripts call: `python -m backend.ingestion.run_docling`, then `python -m backend.ingestion.run_okf`. The notebook is for seeing each stage; the scripts run it in one line."),
     code('''
 from backend.ingestion.run_docling import run_docling_parsing
 from backend.ingestion.run_okf import run_okf_compilation
@@ -190,7 +190,7 @@ code_node = next(n for n in ex["nodes"] if n["id"] == "code:0x4A7B")
 print(json.dumps(code_node, indent=1))
 print([ (r["type"], r["target"]) for r in ex["relationships"] if r["source"] == "code:0x4A7B"])
 '''),
-    md("## 3. Index everything (idempotent: safe to re-run)"),
+    md("## 3. Index everything (idempotent: safe to re-run)\nThe same as `python -m backend.graph_rag.indexer` in a terminal."),
     code('''
 t0 = time.time()
 report = index_okf_store(neo4j, qdrant)
@@ -218,14 +218,14 @@ def show(query, corpus, k=4):
     for h in qdrant.hybrid_search(query, corpus=corpus, top_k=k):
         print(f"  RRF {h['hybrid_score']:.4f} | dense #{str(h['dense_rank']):>4} | bm25 #{str(h['bm25_rank']):>4} | {h['title'][:34]:34s} | {h['text'].split(chr(10),1)[1][:70]}")
 
-show("0x4A7B_VRM_OVERVOLT", "hardware_manuals")             # the code appears in ~15 chunks: BM25 returns them all; fusion promotes the definition row
+show("0x4A7B_VRM_OVERVOLT", "hardware_manuals")             # the code appears in ~15 chunks: BM25 alone ranks the definition row ~12th; fusion lifts it into the top 5
 show("the cooling unit stopped rotating", "hardware_manuals")  # no shared words with the manual ("fan", "tachometer"): dense carries it, BM25 is weak
 show("error 0x8F01", "hardware_manuals")                      # a generic word ("error") drags BM25 towards unrelated chunks: noise is real
 show("0x4A7B", "hardware_manuals")                            # prefix only: works because we also index the split form of every code
 '''),
     md("""
 ### What the ranks tell you
-* **Exact identifier** (`0x4A7B_VRM_OVERVOLT`): the code is mentioned in about 15 chunks across 8 manuals, so BM25 returns *all of them* (the definition row is not necessarily first by BM25 alone). Dense vectors know which chunk is the *definition*. Reciprocal Rank Fusion lets each method vote and the table row wins. With the full question ("What is the root cause ... for 0x4A7B_VRM_OVERVOLT?", as in the web UI) the table row is rank 1 for both methods.
+* **Exact identifier** (`0x4A7B_VRM_OVERVOLT`): the code is mentioned in about 15 chunks across 8 manuals, so BM25 returns *all of them* (the definition row is not necessarily first by BM25 alone). Dense vectors know which chunk is the *definition*. Reciprocal Rank Fusion lets each method vote: the table row (BM25 #12, dense #2 when this was written) comes out 2nd, inside the 5 chunks the model reads. With the full question ("What is the root cause ... for 0x4A7B_VRM_OVERVOLT?", as in the web UI) the table row is rank 1 for both methods.
 * **Paraphrase** with no shared words: BM25 has nothing to match; dense finds the fan chunks.
 * **Generic words hurt BM25**: `error 0x8F01` also matches every chunk containing "error". Stop-word lists and query rewriting exist for this reason.
 
