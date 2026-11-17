@@ -16,7 +16,6 @@ Around the two tracks: document parsing (Docling), an AI gateway with free-model
 | **Trainee** running the code yourself | [PARTICIPANT_GUIDE.md](PARTICIPANT_GUIDE.md) |
 | Setting up the AI gateway and its failover | [docs/AI_GATEWAY_FAILOVER.md](docs/AI_GATEWAY_FAILOVER.md) |
 | Curious about the data | [DATA_PIPELINE_AND_SOURCES.md](DATA_PIPELINE_AND_SOURCES.md) |
-| Reviewing the code | [docs/CODEBASE_REVIEW.md](docs/CODEBASE_REVIEW.md) |
 
 ## The two datasets
 
@@ -106,6 +105,6 @@ Documents/          slide deck, agenda and goals (Syone-internal: git-ignored, n
 ```
 
 ## Honest limits
-This is a teaching system. Entity extraction is rule-based (an LLM extractor is the usual next step); evaluation is keyword based, with an optional panel of three LLM judges (they sometimes disagree with the keyword scores, and with each other: read those cases); free models are rate limited and change every few weeks. Details and the full review: [docs/CODEBASE_REVIEW.md](docs/CODEBASE_REVIEW.md).
+This is a teaching system. Entity extraction is rule-based (an LLM extractor is the usual next step); evaluation is keyword based, with an optional panel of three LLM judges (they sometimes disagree with the keyword scores, and with each other: read those cases); free models are rate limited and change every few weeks.
 
 Designed for **Syone**. MIT License. Aurora Systems and the AOR-3 are fictional.

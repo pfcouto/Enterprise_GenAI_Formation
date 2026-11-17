@@ -50,23 +50,56 @@ MODEL = os.getenv("FORMATION_MODEL", "formation-fast")   # use "formation-local"
 # ------------------------------------------------------------------------------------------------ 01
 write("01_docling_to_google_okf.ipynb", [
     md("""
-# Module 1 - From raw files to a Google OKF knowledge base
+# Module 1 - From raw files to a knowledge base an agent can read
+
+**The question of this notebook:** a company's knowledge sits in PDFs and web pages. What does it take to turn them into text a
+retrieval system (or an agent) can use, *without losing the tables and the figures*?
+
+We go through three stages, and look at what each one keeps:
 
 ```
-data/raw_syone_corp/        <- scraped web pages (Markdown)         \\
-data/raw_hardware_manuals/  <- 8 PDF manuals with tables + figures   /  Stage 1: acquisition
-        |  Docling  (layout model + TableFormer tables + OCR)
-data/docling_output/        <- Stage 2: structured JSON (markdown, tables, figures)
-        |  OKF compiler (frontmatter, entities, related links, INDEX.md)
-data/okf_store/             <- Stage 3: the knowledge base both retrieval tracks use
+Stage 1  data/raw_syone_corp/         79 pages scraped from syone.com (Markdown)      already done, committed
+         data/raw_hardware_manuals/   8 PDF manuals of a fictional server rack        already done, committed
+            |  Docling: finds the layout, rebuilds the tables, reads text in images
+Stage 2  data/docling_output/         one JSON per document: text, tables, figures     this notebook, section 4
+            |  OKF compiler: adds a YAML header (type, entities, links, figures)
+Stage 3  data/okf_store/              the knowledge base: Markdown files + INDEX.md     this notebook, section 4
 ```
-Run the cells in order and **read the outputs**: the point of this module is to see what each stage keeps and what it loses.
+
+**This notebook runs the real pipeline, not a copy of it.** Section 4 calls the same two functions as the command-line scripts
+`python -m backend.ingestion.run_docling` and `python -m backend.ingestion.run_okf`. A notebook is for *seeing* each stage;
+the scripts run it in one line (that is what you would schedule in production).
+
+Run the cells from top to bottom (Shift+Enter). Everything is local: no model API, no internet. About one minute in total.
+"""),
+    md("""
+### Setup
+Loads the project's code and points every path at the project folder. Nothing is parsed yet.
 """),
     code(SETUP + '''
+import warnings
+warnings.filterwarnings("ignore")                 # keep the outputs readable: library warnings are not the lesson here
+os.environ.setdefault("HF_HUB_DISABLE_PROGRESS_BARS", "1")
 from backend.ingestion.docling_parser import DoclingDocumentParser
+logging.getLogger().setLevel(logging.WARNING)      # hide Docling's progress logs
+try:
+    from transformers.utils import logging as hf_logging
+    hf_logging.disable_progress_bar(); hf_logging.set_verbosity_error()
+except ImportError:
+    pass
 print("project root:", ROOT)
 '''),
-    md("## 1. What did the acquisition scripts produce?"),
+    md("""
+## 1. Stage 1: what are the raw files?
+
+Two knowledge bases, on purpose very different:
+* **The Syone website**: 79 real pages, scraped once from syone.com and committed as a dated snapshot (a fresh scrape could
+  change answers the evaluation expects). Web pages are already text, so they are the *easy* case.
+* **The Aurora AOR-3 manuals**: 8 PDFs written for this course. Fictional, so every answer can be checked, and hard on
+  purpose: big tables, codes that differ by one character, facts that exist only inside a figure.
+
+**Look for:** how many pages were kept and skipped, and the 8 PDFs.
+"""),
     code('''
 manifest = json.loads((ROOT / "data/raw_syone_corp/_manifest.json").read_text())
 print(f"Syone website: scraped {manifest['scraped_at'][:10]} from {manifest['source']}")
@@ -78,7 +111,16 @@ print()
 for pdf in sorted((ROOT / "data/raw_hardware_manuals").glob("*.pdf")):
     print(f"  {pdf.name:45s} {pdf.stat().st_size/1024:6.0f} KB")
 '''),
-    md("## 2. Parse a scraped page (no OCR needed) and a PDF (needs Docling)"),
+    md("""
+## 2. Stage 2 on two documents: a web page, then a PDF
+
+**Parsing** = turning a file into clean text *with its structure*: headings, tables, figures. It decides everything that
+comes after: a fact the parser loses can never be found by any search or model.
+
+First a web page. It is already Markdown, so no PDF engine is needed: the parser reads it and keeps its metadata.
+
+**Look for:** `ENGINE: native-markdown`, and the page's title, source URL and section.
+"""),
     code('''
 parser = DoclingDocumentParser(ROOT / "data/extracted_images", ocr_engine="docling_standard")
 
@@ -86,6 +128,19 @@ page = parser.parse_document(ROOT / "data/raw_syone_corp/partners-zabbix-partner
 print("TITLE  :", page["title"]); print("SOURCE :", page["source_url"]); print("SECTION:", page["section"]); print("ENGINE :", page["ocr_engine_used"])
 print(page["markdown_content"][:700])
 '''),
+    md("""
+Now the hard case: a PDF. A PDF stores characters at positions on a page, not "a table with columns". **Docling**
+(open source, IBM) rebuilds the structure with three models that run on this laptop:
+* a **layout model** finds the blocks on each page (title, paragraph, table, picture, caption);
+* **TableFormer** rebuilds each table: which cell belongs to which row and column;
+* **OCR** (RapidOCR) reads text that is inside images.
+
+We parse `aor3_06_fault_code_reference.pdf`: 30 fault codes in one big table that continues on the next page.
+
+**Look for:** the number of tables and figures found, and one row of the fault table printed back as a Markdown row:
+code, subsystem, severity, LED, cause, fix, each in its own column. If the table had been flattened into a paragraph,
+"54.2 V" would no longer be attached to "0x4A7B".
+"""),
     code('''
 t0 = time.time()
 doc = parser.parse_document(ROOT / "data/raw_hardware_manuals/aor3_06_fault_code_reference.pdf", corpus="hardware_manuals")
@@ -95,9 +150,19 @@ row = next(l for l in doc["markdown_content"].splitlines() if "0x4A7B_VRM_OVERVO
 print("A fault-code table row, extracted from the PDF as a Markdown table row:\\n", row)
 '''),
     md("""
-### Check what the parser kept: tables and figures
-Two things commonly get lost in PDF extraction: **table structure** (rows become loose text) and **figures** (images become `<!-- image -->`).
-Here every figure is bound to its file through the caption line, and its *description* is stored next to it, so the words drawn **inside** the picture become searchable text.
+### What the parser kept: tables and figures
+
+Two things usually get lost when a PDF becomes text:
+* **table structure**: rows become loose words. Here each table is also kept as data (below, as a table with its columns);
+* **figures**: an image becomes `<!-- image -->` and its content is gone. Here every figure is bound to its file through
+  its caption, and a **text description** is stored with it.
+
+Why a description? The models that answer questions later are *text* models: **they never see pixels**. What is drawn
+in a figure (an LED legend, a port map) becomes searchable only if it is written down. In this course the descriptions
+were written by hand; in production a vision model writes them at ingestion time.
+
+**Look for:** the first table with its columns; the two figures (F2, the LED legend, and F6, a flowchart) with their
+captions and descriptions; then the F2 picture itself.
 """),
     code('''
 import pandas as pd
@@ -123,26 +188,95 @@ A newer option is a **vision-language model** that reads a page *image* and writ
 
 **Newer is not better by default: measure on your own documents.** Vision models earn their place on scans, formulas and hard layouts; for born-digital PDFs with tables, the classic pipeline wins here.
 """),
-    md("## 4. Run the full pipeline: Docling -> JSON -> OKF\nThis cell calls exactly what the two pipeline scripts call: `python -m backend.ingestion.run_docling`, then `python -m backend.ingestion.run_okf`. The notebook is for seeing each stage; the scripts run it in one line."),
+    md("""
+## 4. Stages 2 and 3 for all 87 documents
+
+This cell is the whole pipeline. It calls exactly what the two scripts call:
+
+| This cell | The same as, in a terminal | Reads | Writes |
+|---|---|---|---|
+| `run_docling_parsing(...)` | `python -m backend.ingestion.run_docling` | `data/raw_*/` | `data/docling_output/*.json` (Stage 2) |
+| `run_okf_compilation(...)` | `python -m backend.ingestion.run_okf` | `data/docling_output/` | `data/okf_store/<corpus>/*.md` + `INDEX.md` (Stage 3) |
+
+Re-running it is safe: it overwrites the same files. About 30 seconds.
+
+**Look for:** `parsed 87 documents, compiled 87 OKF files` (79 web pages + 8 manuals). Open `data/okf_store/` in the file
+explorer and watch it fill.
+"""),
     code('''
 from backend.ingestion.run_docling import run_docling_parsing
 from backend.ingestion.run_okf import run_okf_compilation
-logging.getLogger().setLevel(logging.WARNING)
+t0 = time.time()
 n = run_docling_parsing("docling_standard", "all")
 m = run_okf_compilation("docling_standard", "all")
-print(f"parsed {n} documents, compiled {m} OKF files")
+print(f"parsed {n} documents, compiled {m} OKF files in {time.time()-t0:.0f}s")
 '''),
+    md("""
+### Stage 2 output: what Docling hands to the compiler
+
+One JSON file per document. **Look for:** the fields: the full text as Markdown, the tables as data, the figures with their
+descriptions, and which engine parsed it and how long it took.
+"""),
+    code('''
+stage2 = json.loads((ROOT / "data/docling_output/hardware_manuals__aor3_06_fault_code_reference__standard.json").read_text())
+print(len(list((ROOT / "data/docling_output").glob("*.json"))), "JSON files in data/docling_output/\\n")
+for k, v in stage2.items():
+    shown = f"{len(v)} items" if isinstance(v, list) else (f"{len(v):,} characters" if isinstance(v, str) and len(v) > 80 else repr(v))
+    print(f"  {k:18s} {shown}")
+'''),
+    md("""
+### Stage 3 output: an OKF file
+
+**OKF, the Open Knowledge Format** (Google Cloud, June 2026, v0.1, a proposal): a knowledge base is a **folder of Markdown
+files**, each starting with a short **YAML header** ("frontmatter"); only `type` is required; links between files make the
+folder a graph. A person can read it, git can diff it, an agent can navigate it.
+
+The header our compiler writes, field by field:
+
+| Field | What it is | Who uses it |
+|---|---|---|
+| `type` | the kind of document (`service_manual`, `corporate_overview`...) | the agent, to pick documents |
+| `title`, `summary` | what the document is about, in a sentence | `INDEX.md`, the agent's first look |
+| `entities` | the codes, products and names found in it | search; the graph in session 2 |
+| `related` | links to the documents it refers to or shares entities with | the agent follows them (session 2) |
+| `images` | each figure: file, caption, **description** | figures become searchable text |
+
+Below the header is the document itself, as Markdown. Then **`INDEX.md`**: one line per document, the agent's entry point.
+
+**Look for:** the header of the network switch manual (its entities are fault codes and products; its related documents;
+its two figures), then the first lines of the index. Open the same file in the editor:
+`data/okf_store/hardware_manuals/aor3_04_network_switch_manual.md`.
+"""),
     code('''
 okf = (ROOT / "data/okf_store/hardware_manuals/aor3_04_network_switch_manual.md").read_text()
 print(okf.split("---")[1][:1800])           # the YAML frontmatter: type, entities, related links, figures
 print("..."); print((ROOT / "data/okf_store/syone_corp/INDEX.md").read_text()[:900])   # the agent's entry point
 '''),
+    md("""
+## 5. Test the data before you test the model
+
+A pipeline can fail silently. Real example from building this course: Docling writes underscores escaped
+(`0x4A7B\\_VRM_OVERVOLT`), so an exact search for the code finds nothing, and no error is raised anywhere. The parser now
+undoes that, and `scripts/validate_dataset.py` checks the store every time:
+1. all **30 fault codes** of the reference manual are intact in the OKF store;
+2. all **34 golden questions** (the evaluation of session 3) can be answered from the store: their expected facts are there.
+
+**Look for:** `30/30`, `34/34` and `OK`. Same as running `python scripts/validate_dataset.py` in a terminal.
+"""),
     code('''
 import subprocess
 r = subprocess.run([sys.executable, "scripts/validate_dataset.py"], capture_output=True, text=True)
 print(r.stdout)    # every fault code intact + every golden question answerable from this store
 '''),
     md("""
+## What we have now
+
+* 87 documents, parsed with their tables and figures, compiled into an OKF knowledge base (`data/okf_store/`), and checked.
+* Nothing has been indexed and no model has been called yet.
+
+**Next (notebook 02):** two ways to search this store. Track A chunks it and indexes it (Qdrant for dense + BM25 search,
+Neo4j for a knowledge graph). Track B uses the OKF folder *as it is*: an agent reads `INDEX.md`, greps and opens files.
+
 ### Exercises
 1. Open `data/okf_store/hardware_manuals/aor3_06_fault_code_reference.md`. Find a code whose cell text was wrapped across lines in the PDF. Did the parser keep it in one piece? (`validate_dataset.py` checks all 30.)
 2. Add a ninth PDF of your own to `data/raw_hardware_manuals/`, re-run section 4 and look at its `entities:` list.

@@ -1,4 +1,4 @@
-# AI gateway failover: how to set it up (and teach it)
+# AI gateway failover: how to set it up
 
 **The problem.** Free LLM tiers are capped (OpenRouter: 20 requests/minute and 50/day unless the account holds $10 of credit), providers have outages, and models disappear every few weeks. If each service calls one provider directly, every limit is an outage of *your* product.
 
@@ -167,7 +167,7 @@ Notebook 04, section 3, runs the same drill and prints this table.
 * **Grafana / Prometheus**: *Gateway Failures & Fallbacks* panel (`litellm_deployment_failed_requests`).
 * **A real example from this project:** while one OpenRouter free model had used up its daily quota, a call to `formation-reasoning` was answered with `attempted-fallbacks: 1` by a different free model chosen by OpenRouter's free router (`openrouter/openrouter/free`). The application saw a normal 200.
 
-## Limits of the pattern (say this out loud in the session)
+## Limits of the pattern
 
 * Failover protects **availability**, not **consistency**: a different model may answer with a different style or quality. Keep the alias to models of comparable capability, and record which model answered (Langfuse does).
 * A **daily quota** cannot be retried away within one request; only another provider helps. Cooldown keeps you from hammering a blocked provider.
