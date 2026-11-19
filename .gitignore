@@ -96,3 +96,6 @@ Documents/
 # The speaker guides, if a copy ever lands at the root
 /SPEAKER_GUIDE_*.md
 /FORMATION_SPEAKER_GUIDE.md
+
+# evaluation runs saved by the console (GET /api/eval/runs)
+data/eval_runs/
